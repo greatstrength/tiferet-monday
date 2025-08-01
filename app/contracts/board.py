@@ -1,0 +1,34 @@
+# *** imports
+
+# ** core
+from typing import List
+
+# ** infra
+from tiferet.contracts import Repository, abstractmethod
+
+# *** contracts
+
+# ** contract: board_repo
+class BoardRepository(Repository):
+    """
+    Repository for managing board-related operations.
+    """
+
+    @abstractmethod
+    def add_column(self, board_id: str | int, column_name: str, column_type: str, description: str = None, labels: List[str] = None):
+        """
+        Adds a new column to the specified board.
+
+        :param board_id: ID of the board to which the column will be added.
+        :type board_id: str | int
+        :param column_name: Name of the new column.
+        :type column_name: str
+        :param column_type: Type of the new column (e.g., 'text', 'date').
+        :type column_type: str
+        :param description: Optional description for the column.
+        :type description: str
+        :param labels: Optional list of labels for the column.
+        :type labels: List[str]
+        """
+
+        raise NotImplementedError('The add_column method must be implemented by the board repository.')
