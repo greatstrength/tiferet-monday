@@ -1,0 +1,10 @@
+attrs:
+  board_add_column_cmd:
+    module_path: app.commands.board
+    class_name: AddColumn
+  board_repo:
+    module_path: app.proxies.moncli.board
+    class_name: BoardMoncliProxy
+
+const: 
+  monday_api_key: $env.TIFERET_MONDAY_API_KEY

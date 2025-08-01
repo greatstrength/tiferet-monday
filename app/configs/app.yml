@@ -1,0 +1,4 @@
+interfaces:
+  tiferet_monday:
+    name: Tiferet Monday
+    description: An interface for Tiferet Monday

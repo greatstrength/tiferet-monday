@@ -1,0 +1,8 @@
+features:
+  board.add_column:
+    name: Add Column to Board
+    description: Adds a new column to the specified board.
+    commands:
+    - attribute_id: board_add_column_cmd
+      name: Add Column to Board
+      description: Adds a new column to the specified board.
