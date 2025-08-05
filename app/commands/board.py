@@ -63,3 +63,32 @@ class AddColumn(Command):
             description=description,
             labels=labels
         )
+
+# ** command: list_columns
+class ListColumns(Command):
+    """
+    Command to list all columns in a specified board.
+    """
+
+    # ** attribute: board_repo
+    board_repo: BoardRepository
+
+    def __init__(self, board_repo: BoardRepository):
+        """
+        Initializes the ListColumns command with the board repository.
+
+        :param board_repo: The repository for managing board operations.
+        :type board_repo: BoardRepository
+        """
+        self.board_repo = board_repo
+
+    def execute(self, board_id: str | int, **kwargs):
+        """
+        Lists all columns in the specified board.
+
+        :param board_id: ID of the board from which to list columns.
+        :type board_id: str | int
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
+        return self.board_repo.list_columns(board_id=board_id)

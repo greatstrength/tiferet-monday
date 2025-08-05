@@ -32,3 +32,16 @@ class BoardRepository(Repository):
         """
 
         raise NotImplementedError('The add_column method must be implemented by the board repository.')
+    
+    @abstractmethod
+    def list_columns(self, board_id: str | int) -> List[dict]:
+        """
+        Lists all columns in the specified board.
+
+        :param board_id: ID of the board from which to list columns.
+        :type board_id: str | int
+        :return: List of columns in the board.
+        :rtype: List[dict]
+        """
+
+        raise NotImplementedError('The list_columns method must be implemented by the board repository.')

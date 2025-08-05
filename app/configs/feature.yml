@@ -6,3 +6,10 @@ features:
     - attribute_id: board_add_column_cmd
       name: Add Column to Board
       description: Adds a new column to the specified board.
+  board.list_columns:
+    name: List Columns in Board
+    description: Lists all columns in the specified board.
+    commands:
+    - attribute_id: board_list_columns_cmd
+      name: List Columns in Board
+      description: Lists all columns in the specified board.

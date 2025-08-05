@@ -1,10 +1,11 @@
 # *** imports
 
 # ** core
-from typing import List
+from typing import List, Dict, Any
 
 # ** infra
-from moncli.api_v2 import handlers as client
+from moncli.api_v2 import handlers as monday_client
+from moncli import client as moncli_client
 from moncli import ColumnType
 
 # ** app
@@ -67,7 +68,7 @@ class BoardMoncliProxy(BoardRepository):
             )
 
         # Execute the add column method from the client.
-        client.create_column(
+        monday_client.create_column(
             api_key=self.monday_api_key,
             board_id=board_id,
             title=title,
@@ -75,3 +76,26 @@ class BoardMoncliProxy(BoardRepository):
             defaults=defaults,
             description=description
         )
+
+    # * method: list_columns
+    def list_columns(self, board_id: str | int) -> List[Dict[str, Any]]:
+        """
+        Lists all columns in the specified board using the Moncli client.
+
+        :param board_id: ID of the board from which to list columns.
+        :type board_id: str | int
+        :return: List of columns in the specified board.
+        :rtype: List[moncli.Column]
+        """
+        
+        # Create a Moncli client instance with the API key.
+        if moncli_client.api_key != self.monday_api_key:
+            moncli_client.api_key = self.monday_api_key
+        
+        # Fetch the board using the Moncli client.
+        board = moncli_client.get_board(board_id)
+        
+        # Return the list of columns in the board.
+        return [column.to_primitive() for column in board.columns]
+
+    

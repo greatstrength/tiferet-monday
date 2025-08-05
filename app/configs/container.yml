@@ -2,6 +2,9 @@ attrs:
   board_add_column_cmd:
     module_path: app.commands.board
     class_name: AddColumn
+  board_list_columns_cmd:
+    module_path: app.commands.board
+    class_name: ListColumns
   board_repo:
     module_path: app.proxies.moncli.board
     class_name: BoardMoncliProxy
