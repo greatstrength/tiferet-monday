@@ -13,3 +13,10 @@ features:
     - attribute_id: board_list_columns_cmd
       name: List Columns in Board
       description: Lists all columns in the specified board.
+  item.update_simple_column_value:
+    name: Update Simple Column Value
+    description: Updates the value of a simple column in an item.
+    commands:
+    - attribute_id: item_update_simple_column_value_cmd
+      name: Update Simple Column Value
+      description: Updates the value of a simple column in an item.

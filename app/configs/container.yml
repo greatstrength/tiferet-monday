@@ -5,9 +5,15 @@ attrs:
   board_list_columns_cmd:
     module_path: app.commands.board
     class_name: ListColumns
+  item_update_simple_column_value_cmd:
+    module_path: app.commands.item
+    class_name: UpdateSimpleColumnValue
   board_repo:
     module_path: app.proxies.moncli.board
     class_name: BoardMoncliProxy
+  item_repo:
+    module_path: app.proxies.moncli.item
+    class_name: ItemMoncliProxy
 
 const: 
   monday_api_key: $env.TIFERET_MONDAY_API_KEY
