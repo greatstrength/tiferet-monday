@@ -5,6 +5,7 @@ from typing import Dict, Any
 
 # ** infra
 from tiferet.commands import Command
+from moncli.entities import Item
 
 # ** app
 from ..contracts.item import ItemRepository
@@ -31,12 +32,12 @@ class UpdateSimpleColumnValue(Command):
         self.item_repo = item_repo
 
     # ** method: execute
-    def execute(self, item_id: str | int, column_id: str, value: str, **kwargs) -> Dict[str, Any]:
+    def execute(self, item: Item, column_id: str, value: str, **kwargs) -> Dict[str, Any]:
         """
         Executes the command to update the value of a simple column for the specified item.
 
-        :param item_id: ID of the item to be updated.
-        :type item_id: str | int
+        :param item: The item for which the column value will be updated.
+        :type item: Item
         :param column_id: ID of the column to be updated.
         :type column_id: str
         :param value: New value for the column.
@@ -48,4 +49,4 @@ class UpdateSimpleColumnValue(Command):
         """
         
         # Call the repository method to update the column value.
-        return self.item_repo.update_simple_column_value(item_id=item_id, column_id=column_id, value=value)
+        return self.item_repo.update_simple_column_value(item_id=item.id, column_id=column_id, value=value)
