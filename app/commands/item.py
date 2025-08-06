@@ -49,4 +49,4 @@ class UpdateSimpleColumnValue(Command):
         """
         
         # Call the repository method to update the column value.
-        return self.item_repo.update_simple_column_value(item_id=item.id, column_id=column_id, value=value)
+        return self.item_repo.update_simple_column_value(item_id=item.id, board_id=item.board.id, column_id=column_id, value=value)

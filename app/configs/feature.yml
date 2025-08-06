@@ -17,7 +17,7 @@ features:
     name: Update Simple Column Value
     description: Updates the value of a simple column in an item.
     commands:
-    - attrbute_id: get_moncli_item_cmd
+    - attribute_id: get_moncli_item_cmd
       name: Get Moncli Item
       description: Retrieves an item from Moncli by its ID.
       data_key: item
