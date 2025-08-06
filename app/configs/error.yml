@@ -1,1 +1,8 @@
-errors: {}
+errors:
+  item_not_found:
+    name: Item Not Found
+    description: The specified item could not be found.
+    error_code: ITEM_NOT_FOUND
+    message:
+    - lang: en_US
+      text: Item with ID {} not found.
