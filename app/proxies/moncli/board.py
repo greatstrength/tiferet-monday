@@ -4,7 +4,7 @@
 from typing import List, Dict, Any
 
 # ** infra
-from moncli.api_v2 import handlers as monday_client
+from moncli import api_v2 as api
 from moncli import client as moncli_client
 from moncli import ColumnType
 
@@ -68,7 +68,7 @@ class BoardMoncliProxy(BoardRepository):
             )
 
         # Execute the add column method from the client.
-        monday_client.create_column(
+        api.create_column(
             api_key=self.monday_api_key,
             board_id=board_id,
             title=title,
@@ -97,5 +97,30 @@ class BoardMoncliProxy(BoardRepository):
         
         # Return the list of columns in the board.
         return [column.to_primitive() for column in board.columns]
+    
+    # * method: delete_column
+    def delete_column(self, board_id: str | int, column_id: str):
+        """
+        Deletes a specified column from the board using the Moncli client.
+
+        :param board_id: ID of the board from which the column will be deleted.
+        :type board_id: str | int
+        :param column_id: ID of the column to be deleted.
+        :type column_id: str
+        """
+        
+        api.requests.execute_query(
+            api_key=self.monday_api_key,
+            query=f"""mutation ($boardId: ID!, $columnId: String!) {{
+                delete_column (board_id: $boardId, column_id: $columnId) {{
+                    id
+                }}
+            }}""",
+            variables={
+                'boardId': int(board_id),
+                'columnId': column_id
+            },
+            query_name='delete_column',
+        )
 
     

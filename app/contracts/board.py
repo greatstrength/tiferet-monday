@@ -14,6 +14,7 @@ class BoardRepository(Repository):
     Repository for managing board-related operations.
     """
 
+    # * method: add_column
     @abstractmethod
     def add_column(self, board_id: str | int, column_name: str, column_type: str, description: str = None, labels: List[str] = None):
         """
@@ -30,9 +31,9 @@ class BoardRepository(Repository):
         :param labels: Optional list of labels for the column.
         :type labels: List[str]
         """
-
         raise NotImplementedError('The add_column method must be implemented by the board repository.')
     
+    # * method: list_columns
     @abstractmethod
     def list_columns(self, board_id: str | int) -> List[dict]:
         """
@@ -43,5 +44,17 @@ class BoardRepository(Repository):
         :return: List of columns in the board.
         :rtype: List[dict]
         """
-
         raise NotImplementedError('The list_columns method must be implemented by the board repository.')
+    
+    # * method: delete_column
+    @abstractmethod
+    def delete_column(self, board_id: str | int, column_id: str):
+        """
+        Deletes a column from the specified board.
+
+        :param board_id: ID of the board from which the column will be deleted.
+        :type board_id: str | int
+        :param column_id: ID of the column to be deleted.
+        :type column_id: str
+        """
+        raise NotImplementedError('The delete_column method must be implemented by the board repository.')

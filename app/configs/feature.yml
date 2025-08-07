@@ -13,6 +13,13 @@ features:
     - attribute_id: board_list_columns_cmd
       name: List Columns in Board
       description: Lists all columns in the specified board.
+  board.delete_column:
+    name: Delete Column from Board
+    description: Deletes a specified column from the board.
+    commands:
+    - attribute_id: board_delete_column_cmd
+      name: Delete Column from Board
+      description: Deletes a specified column from the board.
   item.update_simple_column_value:
     name: Update Simple Column Value
     description: Updates the value of a simple column in an item.
