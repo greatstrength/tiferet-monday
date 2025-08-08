@@ -50,3 +50,43 @@ class UpdateSimpleColumnValue(Command):
         
         # Call the repository method to update the column value.
         return self.item_repo.update_simple_column_value(item_id=item.id, board_id=item.board.id, column_id=column_id, value=value)
+    
+# ** command: create_subitem
+class CreateSubitem(Command):
+    """
+    Command for creating a subitem under a specified item.
+    """
+
+    # ** attribute: item_repo
+    item_repo: ItemRepository
+
+    # ** init
+    def __init__(self, item_repo: ItemRepository):
+        """
+        Initializes the CreateSubitem command with the item repository.
+
+        :param item_repo: The repository for managing item operations.
+        :type item_repo: ItemRepository
+        """
+        self.item_repo = item_repo
+
+    # ** method: execute
+    def execute(self, parent_item_id: str | int, item_name: str, **kwargs) -> Any:
+        """
+        Executes the command to create a subitem under the specified parent item.
+
+        :param parent_item_id: ID of the parent item under which the subitem will be created.
+        :type parent_item_id: str | int
+        :param item_name: Name of the subitem to be created.
+        :type item_name: str
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: Result of the subitem creation operation.
+        :rtype: Any
+        """
+        
+        # Call the repository method to create the subitem.
+        return self.item_repo.create_subitem(
+            parent_item_id=parent_item_id,
+            item_name=item_name
+        )

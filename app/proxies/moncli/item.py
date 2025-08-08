@@ -51,3 +51,34 @@ class ItemMoncliProxy(ItemRepository):
             column_id=column_id,
             value=value
         )
+    
+    # * method: create_subitem
+    def create_subitem(self, parent_item_id: str | int, item_name: str) -> Any:
+        """
+        Creates a subitem under the specified item using the Moncli client.
+
+        :param parent_item_id: ID of the parent item under which the subitem will be created.
+        :type parent_item_id: str | int
+        :param item_name: Name of the subitem to be created.
+        :type item_name: str
+        :return: Result of the subitem creation operation.
+        :rtype: Any
+        """
+
+        # Import and moncli api_v2 handlers.
+        return api.requests.execute_query(
+            api_key=self.monday_api_key,
+            query="""
+                mutation ($parent_item_id: ID!, $item_name: String!) {
+                    create_subitem(parent_item_id: $parent_item_id, item_name: $item_name) {
+                        id
+                        name  
+                    }
+                }
+            """,
+            variables={
+                'parent_item_id': int(parent_item_id),
+                'item_name': item_name
+            },
+            query_name='create_subitem',
+        )
