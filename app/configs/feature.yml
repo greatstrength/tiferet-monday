@@ -31,3 +31,10 @@ features:
     - attribute_id: item_update_simple_column_value_cmd
       name: Update Simple Column Value
       description: Updates the value of a simple column in an item.
+  item.create_subitem:
+    name: Create Subitem
+    description: Creates a subitem under a specified item.
+    commands:
+    - attribute_id: item_create_subitem_cmd
+      name: Create Subitem
+      description: Creates a subitem under a specified item.

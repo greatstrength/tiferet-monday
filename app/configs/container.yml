@@ -11,6 +11,9 @@ attrs:
   item_update_simple_column_value_cmd:
     module_path: app.commands.item
     class_name: UpdateSimpleColumnValue
+  item_create_subitem_cmd:
+    module_path: app.commands.item
+    class_name: CreateSubitem
   get_moncli_item_cmd:
     module_path: app.commands.moncli
     class_name: GetMoncliItem
