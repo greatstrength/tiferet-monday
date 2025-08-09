@@ -9,7 +9,7 @@ from ...contracts.item import *
 # *** proxies
 
 # ** proxy: item_moncli_proxy
-class ItemMoncliProxy(ItemRepository):
+class ItemMondayProxy(ItemRepository):
     """
     Proxy for managing item-related operations using the Moncli client.
     """
@@ -20,7 +20,7 @@ class ItemMoncliProxy(ItemRepository):
     # * init
     def __init__(self, monday_api_key: str):
         """
-        Initializes the ItemMoncliProxy with the Monday.com API key.
+        Initializes the ItemMondayProxy with the Monday.com API key.
 
         :param monday_api_key: API key for accessing the Monday.com API.
         :type monday_api_key: str

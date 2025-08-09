@@ -1,7 +1,7 @@
 # *** imports
 
 # ** core
-from typing import List
+from typing import List, Any
 
 # ** infra
 from tiferet.contracts import Repository, abstractmethod
@@ -58,3 +58,20 @@ class BoardRepository(Repository):
         :type column_id: str
         """
         raise NotImplementedError('The delete_column method must be implemented by the board repository.')
+    
+    # * method: create_item
+    @abstractmethod
+    def create_item(self, board_id: str | int, item_name: str, group_id: str = None) -> Any:
+        """
+        Creates a new item in the specified board.
+
+        :param board_id: ID of the board in which the item will be created.
+        :type board_id: str | int
+        :param item_name: Name of the item to be created.
+        :type item_name: str
+        :param group_id: Optional ID of the group under which the item will be created.
+        :type group_id: str
+        :return: Result of the item creation operation.
+        :rtype: Any
+        """
+        raise NotImplementedError('The create_item method must be implemented by the board repository.')

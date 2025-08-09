@@ -14,7 +14,7 @@ from ...contracts.board import BoardRepository
 # *** proxies
 
 # ** proxy: board_moncli_proxy
-class BoardMoncliProxy(BoardRepository):
+class BoardMondayProxy(BoardRepository):
     """
     Proxy for managing board-related operations using the Moncli client.
     """
@@ -123,4 +123,36 @@ class BoardMoncliProxy(BoardRepository):
             query_name='delete_column',
         )
 
-    
+    # * method: create_item
+    def create_item(self, board_id: str | int, item_name: str, group_id: str = None) -> Any:
+        """
+        Creates a new item in the specified board using the Moncli client.
+
+        :param board_id: ID of the board in which the item will be created.
+        :type board_id: str | int
+        :param item_name: Name of the item to be created.
+        :type item_name: str
+        :param group_id: Optional ID of the group under which the item will be created.
+        :type group_id: str
+        :return: Result of the item creation operation.
+        :rtype: Any
+        """
+
+        # Execute the create item method from the client.
+        return api.requests.execute_query(
+            api_key=self.monday_api_key,
+            query="""
+                mutation ($boardId: ID!, $itemName: String!, $groupId: String) {
+                    create_item (board_id: $boardId, item_name: $itemName, group_id: $groupId) {
+                        id
+                        name
+                    }
+                }
+            """,
+            variables=dict(
+                boardId=int(board_id),
+                itemName=item_name,
+                groupId=group_id
+            ),
+            query_name='create_item',
+        )
