@@ -123,3 +123,40 @@ class DeleteColumn(Command):
         :type kwargs: dict
         """
         return self.board_repo.delete_column(board_id=board_id, column_id=column_id)
+    
+# ** command: create_item
+class CreateItem(Command):
+    """
+    Command to create a new item in a specified board.
+    """
+
+    # ** attribute: board_repo
+    board_repo: BoardRepository
+
+    def __init__(self, board_repo: BoardRepository):
+        """
+        Initializes the CreateItem command with the board repository.
+
+        :param board_repo: The repository for managing board operations.
+        :type board_repo: BoardRepository
+        """
+        self.board_repo = board_repo
+
+    def execute(self, board_id: str | int, item_name: str, group_id: str = None, **kwargs):
+        """
+        Creates a new item in the specified board.
+
+        :param board_id: ID of the board where the item will be created.
+        :type board_id: str | int
+        :param item_name: Name of the new item.
+        :type item_name: str
+        :param group_id: Optional ID of the group where the item will be created.
+        :type group_id: str | None
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
+        return self.board_repo.create_item(
+            board_id=board_id, 
+            item_name=item_name,
+            group_id=group_id
+        )

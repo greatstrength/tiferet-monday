@@ -8,6 +8,9 @@ attrs:
   board_delete_column_cmd:
     module_path: app.commands.board
     class_name: DeleteColumn
+  board_create_item_cmd:
+    module_path: app.commands.board
+    class_name: CreateItem
   item_update_simple_column_value_cmd:
     module_path: app.commands.item
     class_name: UpdateSimpleColumnValue
@@ -18,11 +21,11 @@ attrs:
     module_path: app.commands.moncli
     class_name: GetMoncliItem
   board_repo:
-    module_path: app.proxies.moncli.board
-    class_name: BoardMoncliProxy
+    module_path: app.proxies.monday.board
+    class_name: BoardMondayProxy
   item_repo:
-    module_path: app.proxies.moncli.item
-    class_name: ItemMoncliProxy
+    module_path: app.proxies.monday.item
+    class_name: ItemMondayProxy
 
 const: 
   monday_api_key: $env.TIFERET_MONDAY_API_KEY

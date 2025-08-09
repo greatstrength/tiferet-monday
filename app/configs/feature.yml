@@ -20,6 +20,13 @@ features:
     - attribute_id: board_delete_column_cmd
       name: Delete Column from Board
       description: Deletes a specified column from the board.
+  board.create_item:
+    name: Create Item in Board
+    description: Creates a new item in the specified board.
+    commands:
+    - attribute_id: board_create_item_cmd
+      name: Create Item in Board
+      description: Creates a new item in the specified board.
   item.update_simple_column_value:
     name: Update Simple Column Value
     description: Updates the value of a simple column in an item.
