@@ -10,6 +10,7 @@ from moncli import ColumnType
 
 # ** app
 from ...contracts.board import BoardRepository
+from ...clients import monday_client
 
 # *** proxies
 
@@ -139,7 +140,7 @@ class BoardMondayProxy(BoardRepository):
         """
 
         # Execute the create item method from the client.
-        return api.requests.execute_query(
+        return monday_client.execute_query(
             api_key=self.monday_api_key,
             query="""
                 mutation ($boardId: ID!, $itemName: String!, $groupId: String) {
@@ -153,6 +154,5 @@ class BoardMondayProxy(BoardRepository):
                 boardId=int(board_id),
                 itemName=item_name,
                 groupId=group_id
-            ),
-            query_name='create_item',
+            )
         )
