@@ -53,7 +53,7 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                 }
             """,
             variables={'item_ids': [int(item_id) for item_id in item_ids]},
-            query_name='query_items_by_ids',
+            start_node=lambda data: data.get('items', [])
         )
 
         return [DataObject.from_data(
