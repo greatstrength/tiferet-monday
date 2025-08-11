@@ -2,6 +2,7 @@
 
 # ** core
 from typing import Dict, Any
+import json
 
 # ** infra
 from tiferet.commands import Command
@@ -11,6 +12,44 @@ from moncli.entities import Item
 from ..contracts.item import ItemRepository
 
 # *** commands
+
+# ** command: query_by_ids
+class QueryByIds(Command):
+    """
+    Command for querying items by their IDs.
+    """
+
+    # ** attribute: item_repo
+    item_repo: ItemRepository
+
+    # ** init
+    def __init__(self, item_repo: ItemRepository):
+        """
+        Initializes the QueryByIds command with the item repository.
+
+        :param item_repo: The repository for managing item operations.
+        :type item_repo: ItemRepository
+        """
+        self.item_repo = item_repo
+
+    # ** method: execute
+    def execute(self, item_ids: str, **kwargs) -> list[Item]:
+        """
+        Executes the command to query items by their IDs.
+
+        :param item_ids: List of item IDs to query as a serialized string.
+        :type item_ids: str
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: List of items matching the provided IDs.
+        :rtype: list[Item]
+        """
+        
+        # Deserialize the item IDs from the string.
+        item_ids = json.loads(item_ids) if isinstance(item_ids, str) else item_ids
+
+        # Call the repository method to query items by their IDs.
+        return self.item_repo.query_by_ids(item_ids=item_ids)
 
 # ** command: update_simple_column_value
 class UpdateSimpleColumnValue(Command):
