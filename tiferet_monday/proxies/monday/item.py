@@ -4,18 +4,17 @@
 from moncli import api_v2 as api
 
 # ** app
+from ...data.item import ItemData, DataObject
 from ...contracts.item import *
+from .settings import MondayApiProxy
 
 # *** proxies
 
 # ** proxy: item_moncli_proxy
-class ItemMondayProxy(ItemRepository):
+class ItemMondayProxy(ItemRepository, MondayApiProxy):
     """
     Proxy for managing item-related operations using the Moncli client.
     """
-
-    # * attribute: monday_api_key
-    monday_api_key: str
 
     # * init
     def __init__(self, monday_api_key: str):
@@ -25,8 +24,42 @@ class ItemMondayProxy(ItemRepository):
         :param monday_api_key: API key for accessing the Monday.com API.
         :type monday_api_key: str
         """
-        self.monday_api_key = monday_api_key
+        
+        # Initialize the parent class with the API key.
+        super().__init__(monday_api_key)
 
+    # * method: query_by_ids
+    def query_by_ids(self, item_ids: list[str | int]) -> list[ItemContract]:
+        """
+        Queries items by their IDs using the Moncli client.
+
+        :param item_ids: List of item IDs to query.
+        :type item_ids: list[str | int]
+        :return: List of items matching the provided IDs.
+        :rtype: list[ItemContract]
+        """
+
+        # Execute the query to retrieve items by their IDs.
+        data = self.execute_query(
+            query="""
+                query ($item_ids: [ID!]) {
+                    items(ids: $item_ids) {
+                        id
+                        name
+                        board {
+                            id
+                        }
+                    }
+                }
+            """,
+            variables={'item_ids': [int(item_id) for item_id in item_ids]},
+            query_name='query_items_by_ids',
+        )
+
+        return [DataObject.from_data(
+            ItemData,
+            **item
+        ).map() for item in data]
 
     # * method: update_simple_column_value
     def update_simple_column_value(self, item_id: str | int, board_id: str | int, column_id: str, value: str):
@@ -45,7 +78,7 @@ class ItemMondayProxy(ItemRepository):
 
         # Import and moncli api_v2 handlers.
         return api.change_simple_column_value(
-            api_key=self.monday_api_key,
+            api_key=self.api_key,
             item_id=item_id,
             board_id=board_id,
             column_id=column_id,
@@ -67,7 +100,7 @@ class ItemMondayProxy(ItemRepository):
 
         # Import and moncli api_v2 handlers.
         return api.requests.execute_query(
-            api_key=self.monday_api_key,
+            api_key=self.api_key,
             query="""
                 mutation ($parent_item_id: ID!, $item_name: String!) {
                     create_subitem(parent_item_id: $parent_item_id, item_name: $item_name) {
