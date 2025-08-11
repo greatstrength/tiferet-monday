@@ -5,23 +5,19 @@ from typing import List, Dict, Any
 
 # ** infra
 from moncli import api_v2 as api
-from moncli import client as moncli_client
 from moncli import ColumnType
 
 # ** app
 from ...contracts.board import BoardRepository
-from ...clients import monday_client
+from .settings import monday_client, MondayApiProxy
 
 # *** proxies
 
 # ** proxy: board_moncli_proxy
-class BoardMondayProxy(BoardRepository):
+class BoardMondayProxy(BoardRepository, MondayApiProxy):
     """
     Proxy for managing board-related operations using the Moncli client.
     """
-
-    # * attribute: monday_api_key
-    monday_api_key: str
 
     def __init__(self, monday_api_key: str):
         """
@@ -30,7 +26,9 @@ class BoardMondayProxy(BoardRepository):
         :param monday_api_key: API key for accessing the Monday.com API.
         :type monday_api_key: str
         """
-        self.monday_api_key = monday_api_key
+        
+        # Initialize the parent class with the API key.
+        super().__init__(monday_api_key)
 
     def add_column(self, board_id: str | int, title: str, column_type: str, description: str = None, labels: List[str] = None):
         """
@@ -70,7 +68,7 @@ class BoardMondayProxy(BoardRepository):
 
         # Execute the add column method from the client.
         api.create_column(
-            api_key=self.monday_api_key,
+            api_key=self.api_key,
             board_id=board_id,
             title=title,
             column_type=ColumnType[column_type],
@@ -89,15 +87,26 @@ class BoardMondayProxy(BoardRepository):
         :rtype: List[moncli.Column]
         """
         
-        # Create a Moncli client instance with the API key.
-        if moncli_client.api_key != self.monday_api_key:
-            moncli_client.api_key = self.monday_api_key
-        
-        # Fetch the board using the Moncli client.
-        board = moncli_client.get_board(board_id)
-        
-        # Return the list of columns in the board.
-        return [column.to_primitive() for column in board.columns]
+        # Execute the list columns method from the client.
+        return self.execute_query(
+            query="""
+                query ($boardId: [ID!]) {
+                    boards (ids: $boardId) {
+                        columns {
+                            id
+                            title
+                            type
+                            settings_str,
+                            description
+                        }
+                    }
+                }
+            """,
+            variables={
+                'boardId': int(board_id)
+            },
+            start_node=lambda data: data.get('boards', [])[0].get('columns', [])
+        )
     
     # * method: delete_column
     def delete_column(self, board_id: str | int, column_id: str):
@@ -111,7 +120,7 @@ class BoardMondayProxy(BoardRepository):
         """
         
         api.requests.execute_query(
-            api_key=self.monday_api_key,
+            api_key=self.api_key,
             query=f"""mutation ($boardId: ID!, $columnId: String!) {{
                 delete_column (board_id: $boardId, column_id: $columnId) {{
                     id
@@ -141,7 +150,7 @@ class BoardMondayProxy(BoardRepository):
 
         # Execute the create item method from the client.
         return monday_client.execute_query(
-            api_key=self.monday_api_key,
+            api_key=self.api_key,
             query="""
                 mutation ($boardId: ID!, $itemName: String!, $groupId: String) {
                     create_item (board_id: $boardId, item_name: $itemName, group_id: $groupId) {
