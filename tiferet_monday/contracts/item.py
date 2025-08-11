@@ -4,15 +4,40 @@
 from typing import Any
 
 # ** infra
-from tiferet.contracts import Repository, abstractmethod
+from tiferet.contracts import *
 
 # *** contracts
+
+# ** contract: item
+class ItemContract(ModelContract):
+    
+    # * attribute: id
+    id: str
+
+    # * attribute: name
+    name: str
+
+    # * attribute: board_id
+    board_id: str
 
 # ** contract: item_repo
 class ItemRepository(Repository):
     """
     Repository for managing item-related operations.
     """
+
+    # * method: query_by_ids
+    @abstractmethod
+    def query_by_ids(self, item_ids: list[str | int]) -> list[ItemContract]:
+        """
+        Queries items by their IDs.
+
+        :param item_ids: List of item IDs to query.
+        :type item_ids: list[str | int]
+        :return: List of items matching the provided IDs.
+        :rtype: list[ItemContract]
+        """
+        raise NotImplementedError('The query_by_ids method must be implemented by the item repository.')
 
     # * method: update_simple_column_value
     @abstractmethod
