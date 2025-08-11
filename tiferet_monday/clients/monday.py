@@ -9,16 +9,20 @@ import requests
 # *** functions
 
 # ** function: execute_query
-def execute_query(api_key: str, query: str, variables: Dict[str, Any] = {}, timeout: int = None) -> Dict[str, Any]:
+def execute_query(api_key: str, query: str, variables: Dict[str, Any] = {}, timeout: int = None, handle_response = lambda data: data) -> Dict[str, Any]:
     """
     Executes a GraphQL query against the Monday.com API.
 
-    :param api_key: The API key for authentication.
-    :param query_name: The name of the query to execute.
-    :param query: The GraphQL query string.
-    :param variables: Variables to be used in the query.
-    :param timeout: Optional timeout for the request.
+    :param api_key: The API key for accessing the Monday.com API.
     :type api_key: str
+    :param query: The GraphQL query string.
+    :type query: str
+    :param variables: Variables to be used in the query.
+    :type variables: Dict[str, Any]
+    :param timeout: Optional timeout for the request.
+    :type timeout: int
+    :param handle_response: Optional function to process the response data.
+    :type handle_response: function
     :return: The response data from the API.
     :rtype: Dict[str, Any]
     """
@@ -35,4 +39,4 @@ def execute_query(api_key: str, query: str, variables: Dict[str, Any] = {}, time
         timeout=timeout
     )
     
-    return response.json()
+    return handle_response(response.json())
