@@ -20,11 +20,55 @@ class ItemContract(ModelContract):
     # * attribute: board_id
     board_id: str
 
+# ** contract: column_value_contract
+class ColumnValueContract(ModelContract):
+    """
+    Represents a column value in a Monday.com item.
+    """
+
+    # * attribute: id
+    id: str
+
+    # * attribute: name
+    name: str
+
+    # * attribute: type
+    type: str
+
+    # * attribute: value
+    value: str
+
+# ** contract: item_detail_contract
+class ItemDetailContract(ItemContract):
+    """
+    Represents the detailed information of an item in a Monday.com board.
+    """
+
+    # * attribute: group_id
+    group_id: str
+
+    # * attribute: column_values
+    column_values: dict[str, Any]
+
+
 # ** contract: item_repo
 class ItemRepository(Repository):
     """
     Repository for managing item-related operations.
     """
+
+    # * method: query_detail_by_id
+    @abstractmethod
+    def query_detail_by_id(self, item_id: str | int) -> ItemDetailContract:
+        """
+        Queries detailed information about an item by its ID.
+
+        :param item_id: ID of the item to retrieve.
+        :type item_id: str | int
+        :return: Detailed information of the item.
+        :rtype: ItemDetailContract
+        """
+        raise NotImplementedError('The get_detail_by_id method must be implemented by the item repository.')
 
     # * method: query_by_ids
     @abstractmethod
