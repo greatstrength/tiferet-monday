@@ -4,9 +4,24 @@
 from typing import List, Any
 
 # ** infra
-from tiferet.contracts import Repository, abstractmethod
+from tiferet.contracts import *
 
 # *** contracts
+
+# ** contract: group
+class GroupContract(ModelContract):
+    """
+    Represents a group in a Monday.com board.
+    """
+
+    # * attribute: id
+    id: str
+
+    # * attribute: name
+    name: str
+
+    # * attribute: position
+    position: str
 
 # ** contract: board_repo
 class BoardRepository(Repository):
@@ -58,6 +73,19 @@ class BoardRepository(Repository):
         :type column_id: str
         """
         raise NotImplementedError('The delete_column method must be implemented by the board repository.')
+    
+    # * method: query_groups
+    @abstractmethod
+    def query_groups(self, board_id: str | int) -> List[GroupContract]:
+        """
+        Queries all groups in the specified board.
+
+        :param board_id: ID of the board from which to query groups.
+        :type board_id: str | int
+        :return: List of groups in the board.
+        :rtype: List[GroupContract]
+        """
+        raise NotImplementedError('The query_groups method must be implemented by the board repository.')
     
     # * method: create_item
     @abstractmethod
