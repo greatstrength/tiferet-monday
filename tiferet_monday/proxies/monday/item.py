@@ -4,7 +4,7 @@
 from moncli import api_v2 as api
 
 # ** app
-from ...data.item import ItemData, DataObject
+from ...data.item import ItemData, ItemDetailData, DataObject
 from ...contracts.item import *
 from .settings import MondayApiProxy
 
@@ -27,6 +27,52 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         
         # Initialize the parent class with the API key.
         super().__init__(monday_api_key)
+
+    # * method: query_detail_by_id
+    def query_detail_by_id(self, item_id: str | int) -> ItemDetailContract:
+        """
+        Queries detailed information about an item by its ID using the Moncli client.
+        :param item_id: ID of the item to retrieve details for.
+        :type item_id: str | int
+        :return: Detailed information about the item.
+        :rtype: ItemDetailContract
+        """
+
+        # Execute the query to retrieve item details.
+        data = self.execute_query(
+            query="""
+                query ($item_id: ID!) {
+                    items(ids: [$item_id]) {
+                        id
+                        name
+                        board { id }
+                        group { id }
+                        column_values {
+                            id
+                            column {
+                                title
+                                description
+                                settings_str
+                            }
+                            type
+                            value
+                        }
+                    }
+                }
+            """,
+            variables={'item_id': int(item_id)},
+            start_node=lambda data: data.get('items', [])
+        )
+
+        # If no data is returned, return None.
+        if not data:
+            return None
+
+        # Map the retrieved data to the ItemDetailContract.
+        return DataObject.from_data(
+            ItemDetailData,
+            **data[0]
+        ).map()
 
     # * method: query_by_ids
     def query_by_ids(self, item_ids: list[str | int]) -> list[ItemContract]:

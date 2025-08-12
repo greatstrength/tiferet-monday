@@ -13,6 +13,41 @@ from ..contracts.item import ItemRepository
 
 # *** commands
 
+# ** command: query_detail_by_id
+class QueryDetailById(Command):
+    """
+    Command for querying detailed information about an item by its ID.
+    """
+
+    # ** attribute: item_repo
+    item_repo: ItemRepository
+
+    # ** init
+    def __init__(self, item_repo: ItemRepository):
+        """
+        Initializes the QueryDetailById command with the item repository.
+
+        :param item_repo: The repository for managing item operations.
+        :type item_repo: ItemRepository
+        """
+        self.item_repo = item_repo
+
+    # ** method: execute
+    def execute(self, item_id: str | int, **kwargs) -> Item:
+        """
+        Executes the command to query detailed information about an item by its ID.
+
+        :param item_id: ID of the item to retrieve details for.
+        :type item_id: str | int
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: Detailed information about the item.
+        :rtype: Item
+        """
+        
+        # Call the repository method to query details by ID.
+        return self.item_repo.query_detail_by_id(item_id=item_id)
+
 # ** command: query_by_ids
 class QueryByIds(Command):
     """

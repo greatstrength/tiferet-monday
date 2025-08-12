@@ -57,11 +57,11 @@ class ItemRepository(Repository):
     Repository for managing item-related operations.
     """
 
-    # * method: get_detail_by_id
+    # * method: query_detail_by_id
     @abstractmethod
-    def get_detail_by_id(self, item_id: str | int) -> ItemDetailContract:
+    def query_detail_by_id(self, item_id: str | int) -> ItemDetailContract:
         """
-        Retrieves detailed information about an item by its ID.
+        Queries detailed information about an item by its ID.
 
         :param item_id: ID of the item to retrieve.
         :type item_id: str | int
