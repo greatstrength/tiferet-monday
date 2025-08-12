@@ -242,7 +242,7 @@ class ItemDetailData(DataObject, ItemDetail):
         )
     
 # ** data: subitem_data
-class SubitemData(ItemData, Subitem):
+class SubitemData(DataObject, Subitem):
     """
     Represents the data required to create a subitem in a Monday.com item.
     """
@@ -253,9 +253,18 @@ class SubitemData(ItemData, Subitem):
         """
         serialize_when_none = False
         roles = dict(
-            to_model=DataObject.deny('board', 'column_values'),
+            to_model=DataObject.deny('board', 'parent_item', 'column_values'),
             to_data=DataObject.allow()
         )
+
+    # * attribute: board
+    board = ModelType(
+        ItemBoardData,
+        required=True,
+        metadata=dict(
+            description='The board to which the subitem belongs.'
+        )
+    )
 
     # * attribute: parent_item
     parent_item = ModelType(

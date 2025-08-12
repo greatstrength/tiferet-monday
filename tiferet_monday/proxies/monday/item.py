@@ -121,11 +121,14 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         # Execute the query to retrieve subitems.
         data = self.execute_query(
             query="""
-                query ($parent_item_id: ID!) {
-                    items (id: $parent_item_id) {
+                query ($parent_item_id: [ID!]!) {
+                    items (ids: $parent_item_id) {
                         subitems {
                             id
                             name
+                            board {
+                                id
+                            }
                             parent_item { 
                                 id 
                             }
