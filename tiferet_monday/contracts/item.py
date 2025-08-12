@@ -1,7 +1,7 @@
 # *** imports
 
 # ** core
-from typing import Any
+from typing import List, Any
 
 # ** infra
 from tiferet.contracts import *
@@ -20,7 +20,7 @@ class ItemContract(ModelContract):
     # * attribute: board_id
     board_id: str
 
-# ** contract: column_value_contract
+# ** contract: column_value
 class ColumnValueContract(ModelContract):
     """
     Represents a column value in a Monday.com item.
@@ -38,7 +38,7 @@ class ColumnValueContract(ModelContract):
     # * attribute: value
     value: str
 
-# ** contract: item_detail_contract
+# ** contract: item_detail
 class ItemDetailContract(ItemContract):
     """
     Represents the detailed information of an item in a Monday.com board.
@@ -48,8 +48,19 @@ class ItemDetailContract(ItemContract):
     group_id: str
 
     # * attribute: column_values
-    column_values: dict[str, Any]
+    column_values: List[ColumnValueContract]
 
+# ** contract: subitem
+class SubitemContract(ItemContract):
+    """
+    Represents a subitem in a Monday.com item.
+    """
+
+    # * attribute: parent_item_id
+    parent_item_id: str
+
+    # * attribute: column_values
+    column_values: List[ColumnValueContract]
 
 # ** contract: item_repo
 class ItemRepository(Repository):
@@ -82,6 +93,19 @@ class ItemRepository(Repository):
         :rtype: list[ItemContract]
         """
         raise NotImplementedError('The query_by_ids method must be implemented by the item repository.')
+    
+    # * method: query_subitems
+    @abstractmethod
+    def query_subitems(self, parent_item_id: str | int) -> List[SubitemContract]:
+        """
+        Queries subitems for a given parent item ID.
+
+        :param parent_item_id: ID of the parent item for which to query subitems.
+        :type parent_item_id: str | int
+        :return: List of subitems for the specified parent item.
+        :rtype: List[SubitemContract]
+        """
+        raise NotImplementedError('The query_subitems method must be implemented by the item repository.')
 
     # * method: update_simple_column_value
     @abstractmethod
@@ -98,7 +122,6 @@ class ItemRepository(Repository):
         :param value: New value for the column.
         :type value: str
         """
-
         raise NotImplementedError('The update_simple_column_value method must be implemented by the item repository.')
     
     # * method: create_subitem
@@ -114,5 +137,4 @@ class ItemRepository(Repository):
         :return: Result of the subitem creation operation.
         :rtype: Any
         """
-
         raise NotImplementedError('The create_subitem method must be implemented by the item repository.')
