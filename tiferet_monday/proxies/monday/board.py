@@ -8,7 +8,7 @@ from moncli import api_v2 as api
 from moncli import ColumnType
 
 # ** app
-from ...models.board import *
+from ...data.board import *
 from ...contracts.board import (
     BoardRepository,
     GroupContract
@@ -143,7 +143,10 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
         )
 
         # Map the retrieved data to GroupContract objects.
-        return [GroupContract(**group).map() for group in data]
+        return [DataObject.from_data(
+            GroupData, 
+            **group
+        ).map() for group in data]
     
     # * method: delete_column
     def delete_column(self, board_id: str | int, column_id: str):
