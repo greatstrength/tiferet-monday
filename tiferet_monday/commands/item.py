@@ -1,15 +1,15 @@
 # *** imports
 
 # ** core
-from typing import Dict, Any
+from typing import List, Dict, Any
 import json
 
 # ** infra
 from tiferet.commands import Command
-from moncli.entities import Item
 
 # ** app
-from ..contracts.item import ItemRepository
+from ..contracts.item import *
+from ..models.item import *
 
 # *** commands
 
@@ -54,10 +54,10 @@ class QueryByIds(Command):
     Command for querying items by their IDs.
     """
 
-    # ** attribute: item_repo
+    # * attribute: item_repo
     item_repo: ItemRepository
 
-    # ** init
+    # * init
     def __init__(self, item_repo: ItemRepository):
         """
         Initializes the QueryByIds command with the item repository.
@@ -67,7 +67,7 @@ class QueryByIds(Command):
         """
         self.item_repo = item_repo
 
-    # ** method: execute
+    # * method: execute
     def execute(self, item_ids: str, **kwargs) -> list[Item]:
         """
         Executes the command to query items by their IDs.
@@ -85,6 +85,41 @@ class QueryByIds(Command):
 
         # Call the repository method to query items by their IDs.
         return self.item_repo.query_by_ids(item_ids=item_ids)
+    
+# ** command: query_subitems
+class QuerySubitems(Command):
+    """
+    Command for querying subitems of a specified parent item.
+    """
+
+    # * attribute: item_repo
+    item_repo: ItemRepository
+
+    # * init
+    def __init__(self, item_repo: ItemRepository):
+        """
+        Initializes the QuerySubitems command with the item repository.
+
+        :param item_repo: The repository for managing item operations.
+        :type item_repo: ItemRepository
+        """
+        self.item_repo = item_repo
+
+    # * method: execute
+    def execute(self, parent_item_id: str | int, **kwargs) -> List[Subitem]:
+        """
+        Executes the command to query subitems of the specified parent item.
+
+        :param parent_item_id: ID of the parent item whose subitems will be queried.
+        :type parent_item_id: str | int
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: List of subitems under the specified parent item.
+        :rtype: list[Item]
+        """
+        
+        # Call the repository method to query subitems.
+        return self.item_repo.query_subitems(parent_item_id=parent_item_id)
 
 # ** command: update_simple_column_value
 class UpdateSimpleColumnValue(Command):
@@ -95,7 +130,7 @@ class UpdateSimpleColumnValue(Command):
     # ** attribute: item_repo
     item_repo: ItemRepository
 
-    # ** init
+    # * init
     def __init__(self, item_repo: ItemRepository):
         """
         Initializes the UpdateSimpleColumnValue command with the item repository.
@@ -105,7 +140,7 @@ class UpdateSimpleColumnValue(Command):
         """
         self.item_repo = item_repo
 
-    # ** method: execute
+    # * method: execute
     def execute(self, item: Item, column_id: str, value: str, **kwargs) -> Dict[str, Any]:
         """
         Executes the command to update the value of a simple column for the specified item.
@@ -131,10 +166,10 @@ class CreateSubitem(Command):
     Command for creating a subitem under a specified item.
     """
 
-    # ** attribute: item_repo
+    # * attribute: item_repo
     item_repo: ItemRepository
 
-    # ** init
+    # * init
     def __init__(self, item_repo: ItemRepository):
         """
         Initializes the CreateSubitem command with the item repository.
@@ -144,7 +179,7 @@ class CreateSubitem(Command):
         """
         self.item_repo = item_repo
 
-    # ** method: execute
+    # * method: execute
     def execute(self, parent_item_id: str | int, item_name: str, **kwargs) -> Any:
         """
         Executes the command to create a subitem under the specified parent item.
