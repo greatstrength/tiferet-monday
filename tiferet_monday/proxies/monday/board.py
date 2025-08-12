@@ -8,7 +8,11 @@ from moncli import api_v2 as api
 from moncli import ColumnType
 
 # ** app
-from ...contracts.board import BoardRepository
+from ...models.board import *
+from ...contracts.board import (
+    BoardRepository,
+    GroupContract
+)
 from .settings import monday_client, MondayApiProxy
 
 # *** proxies
@@ -107,6 +111,39 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
             },
             start_node=lambda data: data.get('boards', [])[0].get('columns', [])
         )
+    
+    # * method: query_groups
+    def query_groups(self, board_id: str | int) -> List[GroupContract]:
+        """
+        Queries groups in the specified board using the Moncli client.
+
+        :param board_id: ID of the board from which to query groups.
+        :type board_id: str | int
+        :return: List of groups in the specified board.
+        :rtype: List[GroupContract]
+        """
+        
+        # Execute the query to retrieve groups.
+        data = self.execute_query(
+            query="""
+                query ($boardId: [ID!]) {
+                    boards (ids: $boardId) {
+                        groups {
+                            id
+                            title
+                            position
+                        }
+                    }
+                }
+            """,
+            variables={
+                'boardId': int(board_id)
+            },
+            start_node=lambda data: data.get('boards', [])[0].get('groups', [])
+        )
+
+        # Map the retrieved data to GroupContract objects.
+        return [GroupContract(**group).map() for group in data]
     
     # * method: delete_column
     def delete_column(self, board_id: str | int, column_id: str):
