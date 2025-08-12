@@ -108,3 +108,26 @@ class ItemDetail(Item):
             description='A list of column values associated with the item.'
         )
     )
+
+# ** model: subitem
+class Subitem(Item):
+    """
+    Represents a subitem in a Monday.com item.
+    """
+
+    # * attribute: parent_item_id
+    parent_item_id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the parent item to which this subitem belongs.'
+        )
+    )
+
+    # * attribute: column_values
+    column_values = ListType(
+        ModelType(ColumnValue),
+        default=[],
+        metadata=dict(
+            description='A list of column values associated with the subitem.'
+        )
+    )

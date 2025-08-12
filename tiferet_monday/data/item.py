@@ -5,6 +5,12 @@ from tiferet.data import *
 
 # ** app
 from ..models.item import *
+from ..contracts.item import (
+    ColumnValueContract,
+    ItemContract,
+    ItemDetailContract,
+    SubitemContract
+)
 
 # *** data
 
@@ -71,12 +77,12 @@ class ColumnValueData(DataObject, ColumnValue):
     )
 
     # * method: map
-    def map(self) -> ColumnValue:
+    def map(self) -> ColumnValueContract:
         """
         Maps the data object to a ColumnValue model.
 
         :return: A ColumnValue model instance.
-        :rtype: ColumnValue
+        :rtype: ColumnValueContract
         """
         
         return super().map(
@@ -161,12 +167,12 @@ class ItemData(DataObject, Item):
     )
 
     # * method: map
-    def map(self) -> Item:
+    def map(self) -> ItemContract:
         """
         Maps the data object to an Item model.
-
+        
         :return: An Item model instance.
-        :rtype: Item
+        :rtype: ItemContract
         """
         
         # Map the board data to the Item model.
@@ -219,12 +225,12 @@ class ItemDetailData(DataObject, ItemDetail):
     )
 
     # * method: map
-    def map(self) -> ItemDetail:
+    def map(self) -> ItemDetailContract:
         """
         Maps the data object to an ItemDetail model.
 
         :return: An ItemDetail model instance.
-        :rtype: ItemDetail
+        :rtype: ItemDetailContract
         """
         
         # Map the column values to their respective models.
@@ -232,5 +238,55 @@ class ItemDetailData(DataObject, ItemDetail):
             ItemDetail,
             board_id=self.board.id,
             group_id=self.group.id,
+            column_values=[value.map() for value in self.column_values]
+        )
+    
+# ** data: subitem_data
+class SubitemData(ItemData, Subitem):
+    """
+    Represents the data required to create a subitem in a Monday.com item.
+    """
+
+    class Options():
+        """
+        Options for the SubitemData class.
+        """
+        serialize_when_none = False
+        roles = dict(
+            to_model=DataObject.deny('board', 'column_values'),
+            to_data=DataObject.allow()
+        )
+
+    # * attribute: parent_item
+    parent_item = ModelType(
+        ItemData,
+        required=True,
+        metadata=dict(
+            description='The parent item to which this subitem belongs.'
+        )
+    )
+
+    # * attribute: column_values
+    column_values = ListType(
+        ModelType(ColumnValueData),
+        default=[],
+        metadata=dict(
+            description='A list of column values associated with the subitem.'
+        )
+    )
+
+    # * method: map
+    def map(self) -> SubitemContract:
+        """
+        Maps the data object to a Subitem model.
+
+        :return: A Subitem model instance.
+        :rtype: Subitem
+        """
+        
+        return super().map(
+            Subitem,
+            board_id=self.board.id,
+            parent_item_id=self.parent_item.id,
             column_values=[value.map() for value in self.column_values]
         )

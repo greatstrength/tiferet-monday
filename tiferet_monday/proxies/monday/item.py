@@ -4,7 +4,7 @@
 from moncli import api_v2 as api
 
 # ** app
-from ...data.item import ItemData, ItemDetailData, DataObject
+from ...data.item import *
 from ...contracts.item import *
 from .settings import MondayApiProxy
 
@@ -106,6 +106,56 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
             ItemData,
             **item
         ).map() for item in data]
+    
+    # * method: query_subitems
+    def query_subitems(self, parent_item_id: str | int) -> List[SubitemContract]:
+        """
+        Queries subitems for a given parent item ID using the Moncli client.
+
+        :param parent_item_id: ID of the parent item for which to query subitems.
+        :type parent_item_id: str | int
+        :return: List of subitems for the specified parent item.
+        :rtype: List[SubitemContract]
+        """
+
+        # Execute the query to retrieve subitems.
+        data = self.execute_query(
+            query="""
+                query ($parent_item_id: ID!) {
+                    items (id: $parent_item_id) {
+                        subitems {
+                            id
+                            name
+                            parent_item { 
+                                id 
+                            }
+                            column_values {
+                                id
+                                column {
+                                    title
+                                    description
+                                    settings_str
+                                }
+                                type
+                                value
+                            }
+                        }
+                    }
+                }
+            """,
+            variables={'parent_item_id': int(parent_item_id)},
+            start_node=lambda data: data.get('items', [])[0].get('subitems', [])
+        )
+
+        # If no data is returned, return an empty list.
+        if not data:
+            return []
+
+        # Map the retrieved subitems data to SubitemContract.
+        return [DataObject.from_data(
+            SubitemData,
+            **subitem
+        ).map() for subitem in data]
 
     # * method: update_simple_column_value
     def update_simple_column_value(self, item_id: str | int, board_id: str | int, column_id: str, value: str):
