@@ -28,12 +28,12 @@ class DocumentRepository(Repository):
 
     # * method: create_doc_in_column
     @abstractmethod
-    def create_doc_in_column(self, board_id: str | int, column_id: str) -> DocumentContract:
+    def create_doc_in_column(self, item_id: str | int, column_id: str) -> DocumentContract:
         """
-        Creates a document in the specified column of a board.
+        Creates a document in the specified column of an item.
 
-        :param board_id: ID of the board where the document will be created.
-        :type board_id: str | int
+        :param item_id: ID of the item where the document will be created.
+        :type item_id: str | int
         :param column_id: ID of the column where the document will be created.
         :type column_id: str
         :return: The created document.
