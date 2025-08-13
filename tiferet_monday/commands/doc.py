@@ -26,6 +26,8 @@ class CreateDocInColumn(Command):
         :param document_repo: The repository for managing document operations.
         :type document_repo: DocumentRepository
         """
+
+        # Assign the document repository to the command instance.
         self.document_repo = document_repo
 
     # * method: execute
@@ -63,6 +65,8 @@ class UpdateDocName(Command):
         :param document_repo: The repository for managing document operations.
         :type document_repo: DocumentRepository
         """
+
+        # Assign the document repository to the command instance.
         self.document_repo = document_repo
 
     # * method: execute
