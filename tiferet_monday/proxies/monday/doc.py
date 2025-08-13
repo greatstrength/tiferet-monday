@@ -57,3 +57,28 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
             DocumentData,
             **data
         ).map()
+    
+    # * method: update_doc_name
+    def update_doc_name(self, doc_id: str | int, name: str):
+        """
+        Updates the name of a specified monday.com document.
+
+        :param doc_id: ID of the document to rename.
+        :type doc_id: str | int
+        :param name: New name for the document.
+        :type name: str
+        """
+        
+        # Execute the mutation to update the document's name.
+        self.execute_query(
+            query="""
+                mutation ($docId: ID!, $name: String!) {
+                    update_doc_name(docId: $docId, name: $name) 
+                }
+            """,
+            variables={
+                'docId': int(doc_id),
+                'name': name
+            },
+            api_version='2025-10'
+        )

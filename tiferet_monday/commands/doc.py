@@ -26,6 +26,8 @@ class CreateDocInColumn(Command):
         :param document_repo: The repository for managing document operations.
         :type document_repo: DocumentRepository
         """
+
+        # Assign the document repository to the command instance.
         self.document_repo = document_repo
 
     # * method: execute
@@ -45,3 +47,40 @@ class CreateDocInColumn(Command):
         
         # Call the repository method to create a document in the specified column.
         return self.document_repo.create_doc_in_column(item_id=item_id, column_id=column_id)
+    
+# ** command: update_doc_name
+class UpdateDocName(Command):
+    """
+    Command to update the name of a specified document.
+    """
+
+    # * attribute: document_repo
+    document_repo: DocumentRepository
+
+    # * init
+    def __init__(self, document_repo: DocumentRepository):
+        """
+        Initializes the UpdateDocName command with the document repository.
+
+        :param document_repo: The repository for managing document operations.
+        :type document_repo: DocumentRepository
+        """
+
+        # Assign the document repository to the command instance.
+        self.document_repo = document_repo
+
+    # * method: execute
+    def execute(self, doc_id: str | int, name: str, **kwargs):
+        """
+        Executes the command to update the name of a specified document.
+
+        :param doc_id: ID of the document to rename.
+        :type doc_id: str | int
+        :param name: New name for the document.
+        :type name: str
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
+        
+        # Call the repository method to update the document name.
+        self.document_repo.update_doc_name(doc_id=doc_id, name=name)

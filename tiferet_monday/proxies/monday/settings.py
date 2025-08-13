@@ -34,7 +34,7 @@ class MondayApiProxy(object):
         self.api_key = monday_api_key
 
     # * method: execute_query
-    def execute_query(self, query: str, variables: Dict[str, Any] = {}, timeout: int = None, start_node = lambda data: data) -> Dict[str, Any]:
+    def execute_query(self, query: str, variables: Dict[str, Any] = {}, api_version: str = None, timeout: int = None, start_node = lambda data: data) -> Dict[str, Any]:
         """
         Executes a GraphQL query against the Monday.com API.
 
@@ -42,6 +42,8 @@ class MondayApiProxy(object):
         :type query: str
         :param variables: Variables to be used in the query.
         :type variables: Dict[str, Any]
+        :param api_version: Optional API version to use.
+        :type api_version: str
         :param timeout: Optional timeout for the request.
         :type timeout: int
         :param start_node: Optional function to process the start node of the response.
@@ -54,6 +56,7 @@ class MondayApiProxy(object):
             api_key=self.api_key,
             query=query,
             variables=variables,
+            api_version=api_version,
             timeout=timeout,
             handle_response=lambda data: self.handle_response(
                 data,

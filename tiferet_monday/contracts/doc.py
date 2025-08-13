@@ -40,3 +40,16 @@ class DocumentRepository(Repository):
         :rtype: DocumentContract
         """
         raise NotImplementedError('create_doc_in_column method must be implemented in the board_repo.')
+    
+    # * method: update_doc_name
+    @abstractmethod
+    def update_doc_name(self, doc_id: str | int, name: str):
+        """
+        Updates the name of a specified monday.com document.
+
+        :param doc_id: ID of the document to rename.
+        :type doc_id: str | int
+        :param name: New name for the document.
+        :type name: str
+        """
+        raise NotImplementedError('update_doc_name method must be implemented in the board_repo.')
