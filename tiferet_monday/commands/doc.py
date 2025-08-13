@@ -15,18 +15,18 @@ class CreateDocInColumn(Command):
     Command to create a document in a specified column.
     """
 
-    # * attribute: doc_repo
-    doc_repo: DocumentRepository
+    # * attribute: document_repo
+    document_repo: DocumentRepository
 
     # * init
-    def __init__(self, doc_repo: DocumentRepository):
+    def __init__(self, document_repo: DocumentRepository):
         """
         Initializes the CreateDocInColumn command with the document repository.
 
-        :param doc_repo: The repository for managing document operations.
-        :type doc_repo: DocumentRepository
+        :param document_repo: The repository for managing document operations.
+        :type document_repo: DocumentRepository
         """
-        self.doc_repo = doc_repo
+        self.document_repo = document_repo
 
     # * method: execute
     def execute(self, item_id: str | int, column_id: str, **kwargs) -> Document:
@@ -44,4 +44,4 @@ class CreateDocInColumn(Command):
         """
         
         # Call the repository method to create a document in the specified column.
-        return self.doc_repo.create_doc_in_column(item_id=item_id, column_id=column_id)
+        return self.document_repo.create_doc_in_column(item_id=item_id, column_id=column_id)
