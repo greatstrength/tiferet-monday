@@ -11,7 +11,9 @@ from moncli import ColumnType
 from ...data.board import *
 from ...contracts.board import (
     BoardRepository,
-    GroupContract
+    ColumnContract,
+    GroupContract,
+    
 )
 from .settings import monday_client, MondayApiProxy
 
@@ -80,15 +82,15 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
             description=description
         )
 
-    # * method: list_columns
-    def list_columns(self, board_id: str | int) -> List[Dict[str, Any]]:
+    # * method: query_columns
+    def query_columns(self, board_id: str | int) -> List[ColumnContract]:
         """
-        Lists all columns in the specified board using the Moncli client.
+        Queries all columns in the specified board using the Monday proxy.
 
         :param board_id: ID of the board from which to list columns.
         :type board_id: str | int
         :return: List of columns in the specified board.
-        :rtype: List[moncli.Column]
+        :rtype: List[ColumnContract]
         """
         
         # Execute the list columns method from the client.
@@ -111,6 +113,51 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
             },
             start_node=lambda data: data.get('boards', [])[0].get('columns', [])
         )
+    
+    # * method: change_column_metadata
+    def change_column_metadata(self, board_id: str | int, column_id: str, column_property: str = "description", value: str = None) -> ColumnContract:
+        """
+        Changes the metadata of a column in the specified board using the Moncli client.
+        
+        :param board_id: ID of the board containing the column.
+        :type board_id: str | int
+        :param column_id: ID of the column to be updated.
+        :type column_id: str
+        :param column_property: Property of the column to be updated (e.g., 'title', 'description').
+        :type column_property: str
+        :param value: New value for the specified column property.
+        :type value: str
+        :return: Updated column data.
+        :rtype: ColumnContract
+        """
+        
+        # Execute the change column metadata method from the client.
+        data = self.execute_query(
+            query="""
+                mutation ($boardId: ID!, $columnId: String!, $column_property: ColumnProperty, $value: String) {
+                    change_column_metadata (board_id: $boardId, column_id: $columnId, column_property: $column_property, value: $value) {
+                        id
+                        title
+                        type
+                        settings_str
+                        description
+                    }
+                }
+            """,
+            variables={
+                'boardId': int(board_id),
+                'columnId': column_id,
+                'column_property': column_property,
+                'value': value
+            },
+            start_node=lambda data: data.get('change_column_metadata', {})
+        )
+
+        # Map the retrieved data to a ColumnData object.
+        return DataObject.from_data(
+            ColumnData,
+            **data
+        ).map()
     
     # * method: query_groups
     def query_groups(self, board_id: str | int) -> List[GroupContract]:

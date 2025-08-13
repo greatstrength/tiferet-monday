@@ -8,6 +8,24 @@ from tiferet.contracts import *
 
 # *** contracts
 
+# ** contract: column
+class ColumnContract(ModelContract):
+    """
+    Represents a column in a Monday.com board.
+    """
+
+    # * attribute: id
+    id: str
+
+    # * attribute: title
+    name: str
+
+    # * attribute: description
+    description: str
+
+    # * attribute: settings_str
+    settings_str: str
+
 # ** contract: group
 class GroupContract(ModelContract):
     """
@@ -48,18 +66,35 @@ class BoardRepository(Repository):
         """
         raise NotImplementedError('The add_column method must be implemented by the board repository.')
     
-    # * method: list_columns
+    # * method: query_columns
     @abstractmethod
-    def list_columns(self, board_id: str | int) -> List[dict]:
+    def query_columns(self, board_id: str | int) -> List[ColumnContract]:
         """
-        Lists all columns in the specified board.
+        Queries all columns in the specified board.
 
         :param board_id: ID of the board from which to list columns.
         :type board_id: str | int
-        :return: List of columns in the board.
-        :rtype: List[dict]
+        :return: List of columns in the specified board.
+        :rtype: List[ColumnContract]
         """
         raise NotImplementedError('The list_columns method must be implemented by the board repository.')
+    
+    # * change_column_metadata
+    @abstractmethod
+    def change_column_metadata(self, board_id: str | int, column_id: str, title: str = None, description: str = None):
+        """
+        Changes the metadata of a column in the specified board.
+
+        :param board_id: ID of the board containing the column.
+        :type board_id: str | int
+        :param column_id: ID of the column to be updated.
+        :type column_id: str
+        :param title: New title for the column.
+        :type title: str
+        :param description: New description for the column.
+        :type description: str
+        """
+        raise NotImplementedError('The change_column_metadata method must be implemented by the board repository.')
     
     # * method: delete_column
     @abstractmethod
