@@ -40,19 +40,16 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
         
         # Execute the mutation to create a document in the specified column.
         data = self.execute_query(
-            mutation="""
-                mutation ($itemId: ID!, $columnId: String!) {
-                    create_doc(location: {board: {item_id: $itemId, column_id: $columnId}}) {
+            query=f"""
+                mutation {{
+                    create_doc(location: {{board: {{item_id: {int(item_id)}, column_id: "{column_id}"}}}}) {{
                         id
                         name
                         object_id
-                    }
-                }
+                    }}
+                }}
             """,
-            variables={
-                'item_id': int(item_id),
-                'column_id': column_id
-            }
+            start_node=lambda data: data.get('create_doc', {})
         )
 
         # Return the created document as a DocumentContract instance.

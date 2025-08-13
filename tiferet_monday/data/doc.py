@@ -26,3 +26,14 @@ class DocumentData(DataObject, Document):
             to_model=DataObject.allow(),
             to_data=DataObject.allow()
         )
+
+    # * method: map
+    def map(self) -> DocumentContract:
+        """
+        Maps the DocumentData instance to a DocumentContract.
+
+        :return: The mapped DocumentContract instance.
+        :rtype: DocumentContract
+        """
+        
+        return super().map(Document)
