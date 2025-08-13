@@ -16,10 +16,10 @@ from ..models.board import *
 # ** command: add_column
 class AddColumn(Command):
 
-    # ** attribute: board_repo
+    # * attribute: board_repo
     board_repo: BoardRepository
 
-    # ** init
+    # * init
     def __init__(self, board_repo: BoardRepository):
         """
         Initializes the AddColumn command with the board repository.
@@ -30,7 +30,7 @@ class AddColumn(Command):
         # Initialize the command with the board repository.
         self.board_repo = board_repo
 
-    # ** method: execute
+    # * method: execute
     def execute(self, board_id: str | int, title: str, column_type: str, description: str = None, labels: List[str] | str = None, **kwargs):
         """
         Adds a new column to the specified board.
@@ -65,15 +65,16 @@ class AddColumn(Command):
             labels=labels
         )
 
-# ** command: list_columns
-class ListColumns(Command):
+# ** command: query_columns
+class QueryColumns(Command):
     """
-    Command to list all columns in a specified board.
+    Command to query all columns in a specified board.
     """
 
     # ** attribute: board_repo
     board_repo: BoardRepository
 
+    # * init
     def __init__(self, board_repo: BoardRepository):
         """
         Initializes the ListColumns command with the board repository.
@@ -81,9 +82,11 @@ class ListColumns(Command):
         :param board_repo: The repository for managing board operations.
         :type board_repo: BoardRepository
         """
+        # Initialize the command with the board repository.
         self.board_repo = board_repo
 
-    def execute(self, board_id: str | int, **kwargs):
+    # * method: execute
+    def execute(self, board_id: str | int, **kwargs) -> List[Column]:
         """
         Lists all columns in the specified board.
 
@@ -92,7 +95,61 @@ class ListColumns(Command):
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         """
-        return self.board_repo.list_columns(board_id=board_id)
+        # Call the repository method to query columns from the board.
+        return self.board_repo.query_columns(board_id=board_id)
+    
+# ** command: change_column_metadata
+class ChangeColumnMetadata(Command):
+    """
+    Command to change the metadata of a column in a specified board.
+    """
+
+    # ** attribute: board_repo
+    board_repo: BoardRepository
+
+    def __init__(self, board_repo: BoardRepository):
+        """
+        Initializes the ChangeColumnMetadata command with the board repository.
+
+        :param board_repo: The repository for managing board operations.
+        :type board_repo: BoardRepository
+        """
+        # Initialize the command with the board repository.
+        self.board_repo = board_repo
+
+    # * method: execute
+    def execute(self, board_id: str | int, column_id: str, title: str = None, description: str = None, **kwargs):
+        """
+        Changes the metadata of a column in the specified board.
+
+        :param board_id: ID of the board containing the column.
+        :type board_id: str | int
+        :param column_id: ID of the column to be updated.
+        :type column_id: str
+        :param title: New title for the column.
+        :type title: str
+        :param description: New description for the column.
+        :type description: str
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        """
+
+        # Set the column_property to description and value to the description parameter by default.
+        column_property = "description"
+        value = description
+
+        # If title is provided, change the column_property to title and value to the title parameter.
+        if title is not None:
+            column_property = "title"
+            value = title
+
+        # Call the repository method to change the column metadata.
+        return self.board_repo.change_column_metadata(
+            board_id=board_id,
+            column_id=column_id,
+            column_property=column_property,
+            value=value
+        )
     
 # ** command: delete_column
 class DeleteColumn(Command):
@@ -100,9 +157,10 @@ class DeleteColumn(Command):
     Command to delete a specified column from a board.
     """
 
-    # ** attribute: board_repo
+    # * attribute: board_repo
     board_repo: BoardRepository
 
+    # * init
     def __init__(self, board_repo: BoardRepository):
         """
         Initializes the DeleteColumn command with the board repository.
@@ -112,6 +170,7 @@ class DeleteColumn(Command):
         """
         self.board_repo = board_repo
 
+    # * method: execute
     def execute(self, board_id: str | int, column_id: str, **kwargs):
         """
         Deletes the specified column from the board.
@@ -131,7 +190,7 @@ class QueryGroups(Command):
     Command to query groups in a specified board.
     """
 
-    # ** attribute: board_repo
+    # * attribute: board_repo
     board_repo: BoardRepository
 
     def __init__(self, board_repo: BoardRepository):
@@ -143,6 +202,7 @@ class QueryGroups(Command):
         """
         self.board_repo = board_repo
 
+    # * method: execute
     def execute(self, board_id: str | int, **kwargs) -> List[Group]:
         """
         Queries groups in the specified board.
@@ -162,9 +222,10 @@ class CreateItem(Command):
     Command to create a new item in a specified board.
     """
 
-    # ** attribute: board_repo
+    # * attribute: board_repo
     board_repo: BoardRepository
 
+    # * init
     def __init__(self, board_repo: BoardRepository):
         """
         Initializes the CreateItem command with the board repository.
@@ -174,6 +235,7 @@ class CreateItem(Command):
         """
         self.board_repo = board_repo
 
+    # * method: execute
     def execute(self, board_id: str | int, item_name: str, group_id: str = None, **kwargs):
         """
         Creates a new item in the specified board.
