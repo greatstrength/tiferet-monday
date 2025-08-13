@@ -70,7 +70,7 @@ class UpdateDocName(Command):
         self.document_repo = document_repo
 
     # * method: execute
-    def execute(self, doc_id: str | int, name: str):
+    def execute(self, doc_id: str | int, name: str, **kwargs):
         """
         Executes the command to update the name of a specified document.
 
@@ -78,6 +78,8 @@ class UpdateDocName(Command):
         :type doc_id: str | int
         :param name: New name for the document.
         :type name: str
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
         """
         
         # Call the repository method to update the document name.

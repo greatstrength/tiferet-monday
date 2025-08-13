@@ -79,5 +79,6 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
             variables={
                 'docId': int(doc_id),
                 'name': name
-            }
+            },
+            api_version='2025-10'
         )
