@@ -79,9 +79,6 @@ class QueryByIds(Command):
         :return: List of items matching the provided IDs.
         :rtype: list[Item]
         """
-        
-        # Deserialize the item IDs from the string.
-        item_ids = json.loads(item_ids) if isinstance(item_ids, str) else item_ids
 
         # Call the repository method to query items by their IDs.
         return self.item_repo.query_by_ids(item_ids=item_ids)
