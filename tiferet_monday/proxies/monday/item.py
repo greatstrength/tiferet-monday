@@ -95,6 +95,17 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                         board {
                             id
                         }
+                        updates {
+                            id
+                            item_id
+                            creator_id
+                            body
+                            replies {
+                                id
+                                body
+                                creator_id
+                            }
+                        }
                     }
                 }
             """,
@@ -141,6 +152,17 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                                 }
                                 type
                                 value
+                            }
+                            updates {
+                                id
+                                item_id
+                                creator_id
+                                body
+                                replies {
+                                    id
+                                    body
+                                    creator_id
+                                }
                             }
                         }
                     }
