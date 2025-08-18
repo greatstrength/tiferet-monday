@@ -5,6 +5,83 @@ from tiferet.models import *
 
 # *** models
 
+# * model: reply
+class Reply(Entity):
+    """
+    Represents a reply in a Monday.com item.
+    """
+
+    # * attribute: id
+    id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the reply.'
+        )
+    )
+
+    # * attribute: creator_id
+    creator_id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the user who created the reply.'
+        )
+    )
+
+    # * attribute: body
+    body = StringType(
+        required=True,
+        metadata=dict(
+            description='The content of the reply.'
+        )
+    )
+
+# ** model: update
+class Update(Entity):
+    """
+    Represents an update in a Monday.com item.
+    """
+
+    # * attribute: id
+    id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the update.'
+        )
+    )
+
+    # * attribute: creator_id
+    creator_id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the user who created the update.'
+        )
+    )
+
+    # * item_id
+    item_id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the item to which the update belongs.'
+        )
+    )
+
+    # * attribute: body
+    body = StringType(
+        required=True,
+        metadata=dict(
+            description='The content of the update.'
+        )
+    )
+
+    # * attribute: replies
+    replies = ListType(
+        ModelType(Reply),
+        default=[],
+        metadata=dict(
+            description='A list of replies associated with the update.'
+        )
+    )
+
 # ** model: column_value
 class ColumnValue(ValueObject):
     """
@@ -83,6 +160,15 @@ class Item(Entity):
         required=True,
         metadata=dict(
             description='The unique identifier of the board to which the item belongs.'
+        )
+    )
+
+    # * attribute: updates
+    updates = ListType(
+        ModelType(Update),
+        default=[],
+        metadata=dict(
+            description='A list of updates associated with the item.'
         )
     )
 
