@@ -68,12 +68,12 @@ class QueryByIds(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, item_ids: str, **kwargs) -> list[Item]:
+    def execute(self, item_ids: List[str | int], **kwargs) -> List[Item]:
         """
         Executes the command to query items by their IDs.
 
-        :param item_ids: List of item IDs to query as a serialized string.
-        :type item_ids: str
+        :param item_ids: List of IDs of the items to be queried.
+        :type item_ids: List[str | int]
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         :return: List of items matching the provided IDs.
