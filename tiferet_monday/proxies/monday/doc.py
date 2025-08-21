@@ -98,22 +98,22 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
         data = self.execute_query(
             query="""
                 query ($docId: [ID!]!) {
-                    doc(ids: $docId) {
+                    docs (object_ids: $docId) {
                         blocks {
                             id
                             type
-                            text
+                            content
                         }
                     }
                 }
             """,
             variables={'docId': int(doc_id)},
-            start_node=lambda data: data.get('doc')
+            start_node=lambda data: data.get('docs')
         )
 
         # If no data is returned, return an empty list.
-        if not data:
+        if not data[0]:
             return []
 
         # Map the retrieved document data to extract blocks.
-        return DataObject.from_data(DocumentData, **data).blocks
+        return DataObject.from_data(DocumentData, **data[0]).blocks

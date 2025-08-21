@@ -67,7 +67,7 @@ class Document(Entity):
 
     # * attribute: blocks
     blocks = ListType(
-        DocumentBlock,
+        ModelType(DocumentBlock),
         default=[],
         metadata=dict(
             description='A list of blocks within the document.'
