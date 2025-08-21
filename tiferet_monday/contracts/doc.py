@@ -75,9 +75,9 @@ class DocumentRepository(Repository):
         """
         raise NotImplementedError('update_doc_name method must be implemented in the board_repo.')
     
-    # * method: read_doc_blocks
+    # * method: query_doc_blocks
     @abstractmethod
-    def read_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
+    def query_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
         """
         Reads the blocks of a specified document.
 
@@ -90,7 +90,7 @@ class DocumentRepository(Repository):
         :return: List of blocks in the document.
         :rtype: List[DocumentBlockContract]
         """
-        raise NotImplementedError('read_doc_blocks method must be implemented in the board_repo.')
+        raise NotImplementedError('query_doc_blocks method must be implemented in the board_repo.')
     
     # * method: create_doc_block
     @abstractmethod

@@ -85,8 +85,8 @@ class UpdateDocName(Command):
         # Call the repository method to update the document name.
         self.document_repo.update_doc_name(doc_id=doc_id, name=name)
 
-# ** command: read_doc_blocks
-class ReadDocBlocks(Command):
+# ** command: query_doc_blocks
+class QueryDocBlocks(Command):
     """
     Command to read the blocks of a specified document.
     """
@@ -97,7 +97,7 @@ class ReadDocBlocks(Command):
     # * init
     def __init__(self, document_repo: DocumentRepository):
         """
-        Initializes the ReadDocBlocks command with the document repository.
+        Initializes the QueryDocBlocks command with the document repository.
 
         :param document_repo: The repository for managing document operations.
         :type document_repo: DocumentRepository
@@ -124,7 +124,7 @@ class ReadDocBlocks(Command):
         """
         
         # Call the repository method to read the document blocks.
-        return self.document_repo.read_doc_blocks(
+        return self.document_repo.query_doc_blocks(
             doc_id=doc_id,
             limit=limit,
             page=page

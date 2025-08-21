@@ -83,8 +83,8 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
             api_version='2025-10'
         )
 
-    # * method: read_doc_blocks
-    def read_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
+    # * method: query_doc_blocks
+    def query_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
         """
         Reads the blocks of a specified document using the Monday.com API.
 
