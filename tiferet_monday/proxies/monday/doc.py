@@ -117,3 +117,45 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
 
         # Map the retrieved document data to extract blocks.
         return DataObject.from_data(DocumentData, **data[0]).blocks
+    
+    # * method: create_doc_block
+    def create_doc_block(self, doc_id: str | int, type: str, content: str, after_block_id: str = None) -> str:
+        """
+        Creates a new block in the specified document using the Monday.com API.
+
+        :param doc_id: ID of the document where the block will be created.
+        :type doc_id: str | int
+        :param type: Type of the block to be created.
+        :type type: str
+        :param content: Content of the block.
+        :type content: str
+        :param after_block_id: ID of the block after which the new block will be inserted (optional).
+        :type after_block_id: str
+        :return: The id of the created document block.
+        :rtype: str
+        """
+        
+        # Execute the mutation to create a new document block.
+        data = self.execute_query(
+            query="""
+                mutation ($docId: ID!, $type: String!, $content: String!, $afterBlockId: String) {
+                    create_doc_block(doc_id: $docId, type: $type, content: $content, after_block_id: $afterBlockId) {
+                        id
+                    }
+                }
+            """,
+            variables={
+                'docId': int(doc_id),
+                'type': type,
+                'content': content,
+                'afterBlockId': after_block_id
+            },
+            start_node=lambda data: data.get('create_doc_block', {})
+        )
+
+        # If no data is returned, return None.
+        if not data:
+            return None
+
+        # Return the ID of the created document block.
+        return data.get('id', None)
