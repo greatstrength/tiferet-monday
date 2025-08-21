@@ -107,12 +107,16 @@ class ReadDocBlocks(Command):
         self.document_repo = document_repo
 
     # * method: execute
-    def execute(self, doc_id: str | int, **kwargs) -> List[DocumentBlock]:
+    def execute(self, doc_id: str | int, limit: int = 25, page: int = 1, **kwargs) -> List[DocumentBlock]:
         """
         Executes the command to read blocks from a specified document.
 
         :param doc_id: ID of the document to read blocks from.
         :type doc_id: str | int
+        :param limit: Maximum number of blocks to read (default is 25).
+        :type limit: int
+        :param page: Page number for pagination (default is 1).
+        :type page: int
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         :return: List of blocks in the document.
@@ -120,7 +124,11 @@ class ReadDocBlocks(Command):
         """
         
         # Call the repository method to read the document blocks.
-        return self.document_repo.read_doc_blocks(doc_id=doc_id)
+        return self.document_repo.read_doc_blocks(
+            doc_id=doc_id,
+            limit=limit,
+            page=page
+        )
     
 # ** command: create_doc_block
 class CreateDocBlock(Command):
