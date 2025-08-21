@@ -82,3 +82,38 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
             },
             api_version='2025-10'
         )
+
+    # * method: read_doc_blocks
+    def read_doc_blocks(self, doc_id: str | int) -> List[DocumentBlockContract]:
+        """
+        Reads the blocks of a specified document using the Monday.com API.
+
+        :param doc_id: ID of the document to read blocks from.
+        :type doc_id: str | int
+        :return: List of blocks in the document.
+        :rtype: List[DocumentBlockContract]
+        """
+        
+        # Execute the query to retrieve the document's blocks.
+        data = self.execute_query(
+            query="""
+                query ($docId: [ID!]!) {
+                    doc(ids: $docId) {
+                        blocks {
+                            id
+                            type
+                            text
+                        }
+                    }
+                }
+            """,
+            variables={'docId': int(doc_id)},
+            start_node=lambda data: data.get('doc')
+        )
+
+        # If no data is returned, return an empty list.
+        if not data:
+            return []
+
+        # Map the retrieved document data to extract blocks.
+        return DataObject.from_data(DocumentData, **data).blocks

@@ -74,3 +74,16 @@ class DocumentRepository(Repository):
         :type name: str
         """
         raise NotImplementedError('update_doc_name method must be implemented in the board_repo.')
+    
+    # * method: read_doc_blocks
+    @abstractmethod
+    def read_doc_blocks(self, doc_id: str | int) -> List[DocumentBlockContract]:
+        """
+        Reads the blocks of a specified document.
+
+        :param doc_id: ID of the document to read blocks from.
+        :type doc_id: str | int
+        :return: List of blocks in the document.
+        :rtype: List[DocumentBlockContract]
+        """
+        raise NotImplementedError('read_doc_blocks method must be implemented in the board_repo.')
