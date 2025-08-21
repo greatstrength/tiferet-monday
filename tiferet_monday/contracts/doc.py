@@ -87,3 +87,22 @@ class DocumentRepository(Repository):
         :rtype: List[DocumentBlockContract]
         """
         raise NotImplementedError('read_doc_blocks method must be implemented in the board_repo.')
+    
+    # * method: create_doc_block
+    @abstractmethod
+    def create_doc_block(self, doc_id: str | int, type: str, content: str, after_block_id: str = None) -> DocumentBlockContract:
+        """
+        Creates a new block in the specified document.
+
+        :param doc_id: ID of the document where the block will be created.
+        :type doc_id: str | int
+        :param type: Type of the block to be created.
+        :type type: str
+        :param content: Content of the block.
+        :type content: str
+        :param after_block_id: ID of the block after which the new block will be inserted (optional).
+        :type after_block_id: str
+        :return: The created document block.
+        :rtype: DocumentBlockContract
+        """
+        raise NotImplementedError('create_doc_block method must be implemented in the board_repo.')
