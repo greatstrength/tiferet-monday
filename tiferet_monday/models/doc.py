@@ -65,8 +65,8 @@ class Document(Entity):
         )
     )
 
-    # * attribute: document_blocks
-    document_blocks = ListType(
+    # * attribute: blocks
+    blocks = ListType(
         DocumentBlock,
         default=[],
         metadata=dict(

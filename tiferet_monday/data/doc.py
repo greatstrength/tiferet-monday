@@ -24,7 +24,25 @@ class DocumentData(DataObject, Document):
         serialize_when_none = False
         roles = dict(
             to_model=DataObject.allow(),
-            to_data=DataObject.allow()
+            to_data=DataObject.deny('blocks')
+        )
+
+    # * method: to_primitive
+    def to_primitive(self, role = 'to_data', **kwargs) -> dict:
+        """
+        Converts the DocumentData instance to a primitive dictionary representation.
+
+        :param role: The role to use for serialization.
+        :type role: str
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary representation of the DocumentData instance.
+        :rtype: dict
+        """
+        
+        # Call the parent method to get the primitive representation.
+        return dict(
+            **super().to_primitive(role=role, **kwargs),
+            blocks=[block.to_primitive() for block in self.blocks]
         )
 
     # * method: map
