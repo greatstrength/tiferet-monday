@@ -84,12 +84,16 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
         )
 
     # * method: read_doc_blocks
-    def read_doc_blocks(self, doc_id: str | int) -> List[DocumentBlockContract]:
+    def read_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
         """
         Reads the blocks of a specified document using the Monday.com API.
 
         :param doc_id: ID of the document to read blocks from.
         :type doc_id: str | int
+        :param limit: Maximum number of blocks to read (default is 25).
+        :type limit: int
+        :param page: Page number for pagination (default is 1).
+        :type page: int
         :return: List of blocks in the document.
         :rtype: List[DocumentBlockContract]
         """
@@ -97,9 +101,9 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
         # Execute the query to retrieve the document's blocks.
         data = self.execute_query(
             query="""
-                query ($docId: [ID!]!) {
-                    docs (object_ids: $docId) {
-                        blocks {
+                query ($docId: [ID!]!, $limit: Int, $page: Int) {
+                    docs (ids: $docId) {
+                        blocks (limit: $limit, page: $page) {
                             id
                             type
                             content
@@ -107,7 +111,11 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
                     }
                 }
             """,
-            variables={'docId': int(doc_id)},
+            variables=dict(
+                docId=int(doc_id), 
+                limit=limit,
+                page=page
+            ),
             start_node=lambda data: data.get('docs')
         )
 
@@ -138,7 +146,7 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
         # Execute the mutation to create a new document block.
         data = self.execute_query(
             query="""
-                mutation ($docId: ID!, $type: String!, $content: String!, $afterBlockId: String) {
+                mutation ($docId: ID!, $type: DocBlockContentType!, $content: JSON!, $afterBlockId: String) {
                     create_doc_block(doc_id: $docId, type: $type, content: $content, after_block_id: $afterBlockId) {
                         id
                     }
