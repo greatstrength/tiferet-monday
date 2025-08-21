@@ -1,9 +1,27 @@
 # *** imports
 
+# ** core
+from typing import List
+
 # ** infra
 from tiferet.contracts import *
 
 # *** contracts
+
+# ** contract: document_block
+class DocumentBlockContract(ModelContract):
+    """
+    Represents a block of content within a document.
+    """
+
+    # * attribute: id
+    id: str
+
+    # * attribute: type
+    type: str
+
+    # * attribute: content
+    content: str
 
 # ** contract: document
 class DocumentContract(ModelContract):
@@ -19,6 +37,9 @@ class DocumentContract(ModelContract):
 
     # * attribute: object_id
     object_id: str
+
+    # * attribute: blocks
+    blocks: List[DocumentBlockContract]
 
 # ** contract: document_repo
 class DocumentRepository(Repository):
