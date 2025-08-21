@@ -77,12 +77,16 @@ class DocumentRepository(Repository):
     
     # * method: read_doc_blocks
     @abstractmethod
-    def read_doc_blocks(self, doc_id: str | int) -> List[DocumentBlockContract]:
+    def read_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
         """
         Reads the blocks of a specified document.
 
         :param doc_id: ID of the document to read blocks from.
         :type doc_id: str | int
+        :param limit: Maximum number of blocks to read (default is 25).
+        :type limit: int
+        :param page: Page number for pagination (default is 1).
+        :type page: int
         :return: List of blocks in the document.
         :rtype: List[DocumentBlockContract]
         """
