@@ -23,7 +23,7 @@ class DocumentData(DataObject, Document):
         """
         serialize_when_none = False
         roles = dict(
-            to_model=DataObject.allow(),
+            to_model=DataObject.deny('blocks'),
             to_data=DataObject.deny('blocks')
         )
 
