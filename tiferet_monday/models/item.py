@@ -3,6 +3,9 @@
 # ** infra
 from tiferet.models import *
 
+# ** app
+from ..models.doc import DocumentBlock
+
 # *** models
 
 # * model: reply
@@ -172,6 +175,29 @@ class Item(Entity):
         )
     )
 
+# ** model: item_description
+class ItemDescription(Entity):
+    """
+    Represents the description of a Monday.com item.
+    """
+
+    # * attribute: 
+    id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the item description document.'
+        )
+    )
+
+    # * attribute: blocks
+    blocks = ListType(
+        ModelType(DocumentBlock),
+        default=[],
+        metadata=dict(
+            description='A list of document blocks that make up the item description.'
+        )
+    )
+
 # ** model: item_detail
 class ItemDetail(Item):
     """
@@ -183,6 +209,14 @@ class ItemDetail(Item):
         required=True,
         metadata=dict(
             description='The unique identifier of the group to which the item belongs.'
+        )
+    )
+
+    # * attribute: description
+    description = ModelType(
+        ItemDescription,
+        metadata=dict(
+            description='The description of the item.'
         )
     )
 

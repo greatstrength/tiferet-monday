@@ -2,7 +2,6 @@
 
 # ** core
 from typing import List, Dict, Any
-import json
 
 # ** infra
 from tiferet.commands import Command

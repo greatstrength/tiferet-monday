@@ -210,8 +210,8 @@ class ItemDetailData(DataObject, ItemDetail):
         """
         serialize_when_none = False
         roles = dict(
-            to_model=DataObject.deny('board', 'group', 'column_values'),
-            to_data=DataObject.allow()
+            to_model=DataObject.deny('board', 'group', 'column_values', 'description'),
+            to_data=DataObject.deny('description')
         )
 
     # * attribute: board
@@ -240,6 +240,22 @@ class ItemDetailData(DataObject, ItemDetail):
             description='A list of column values associated with the item.'
         )
     )
+
+    # * method: to_primitive
+    def to_primitive(self, role: str = 'to_data', **kwargs) -> dict:
+        """
+        Converts the data object to a primitive dictionary representation.
+        :param role: The role to use for serialization.
+        :type role: str
+        :return: A dictionary representation of the data object.
+        :rtype: dict
+        """
+        
+        # Convert the data object to a primitive dictionary using the specified role.
+        return dict(
+            super().to_primitive(role=role, **kwargs),
+            description=self.description.to_primitive()
+        )
 
     # * method: map
     def map(self) -> ItemDetailContract:

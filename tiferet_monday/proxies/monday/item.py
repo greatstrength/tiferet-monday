@@ -47,6 +47,14 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                         name
                         board { id }
                         group { id }
+                        description {
+                            id
+                            blocks (limit: 1000, page: 1) {
+                                id
+                                type
+                                content
+                            }
+                        }
                         column_values {
                             id
                             column {
