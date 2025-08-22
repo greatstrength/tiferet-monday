@@ -210,7 +210,7 @@ class ItemDetailData(DataObject, ItemDetail):
         """
         serialize_when_none = False
         roles = dict(
-            to_model=DataObject.deny('board', 'group', 'column_values'),
+            to_model=DataObject.deny('board', 'group', 'column_values', 'description'),
             to_data=DataObject.deny('description')
         )
 
