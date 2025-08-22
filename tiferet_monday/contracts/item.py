@@ -6,6 +6,9 @@ from typing import List, Any
 # ** infra
 from tiferet.contracts import *
 
+# ** app
+from .doc import DocumentBlockContract
+
 # *** contracts
 
 # ** contract: item
@@ -38,6 +41,18 @@ class ColumnValueContract(ModelContract):
     # * attribute: value
     value: str
 
+# ** contract: item_description
+class ItemDescriptionContract(ModelContract):
+    """
+    Represents the description of a Monday.com item.
+    """
+
+    # * attribute: text
+    text: str
+
+    # * attribute: blocks
+    blocks: List[DocumentBlockContract]
+
 # ** contract: item_detail
 class ItemDetailContract(ItemContract):
     """
@@ -49,6 +64,9 @@ class ItemDetailContract(ItemContract):
 
     # * attribute: column_values
     column_values: List[ColumnValueContract]
+
+    # * attribute: description
+    description: ItemDescriptionContract
 
 # ** contract: subitem
 class SubitemContract(ItemContract):
