@@ -62,6 +62,19 @@ class DocumentRepository(Repository):
         """
         raise NotImplementedError('create_doc_in_column method must be implemented in the board_repo.')
     
+    # * method: query_by_object_ids
+    @abstractmethod
+    def query_by_object_ids(self, object_ids: List[str]) -> List[DocumentContract]:
+        """
+        Queries documents by their object IDs.
+
+        :param object_ids: List of object IDs of the documents to retrieve.
+        :type object_ids: List[str]
+        :return: List of documents matching the specified object IDs.
+        :rtype: List[DocumentContract]
+        """
+        raise NotImplementedError('query_by_object_ids method must be implemented in the board_repo.')
+    
     # * method: update_doc_name
     @abstractmethod
     def update_doc_name(self, doc_id: str | int, name: str):
