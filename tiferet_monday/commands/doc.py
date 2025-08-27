@@ -48,6 +48,43 @@ class CreateDocInColumn(Command):
         # Call the repository method to create a document in the specified column.
         return self.document_repo.create_doc_in_column(item_id=item_id, column_id=column_id)
     
+# ** command: query_docs_by_object_ids
+class QueryDocsByObjectIds(Command):
+    """
+    Command to query documents by their object IDs.
+    """
+
+    # * attribute: document_repo
+    document_repo: DocumentRepository
+
+    # * init
+    def __init__(self, document_repo: DocumentRepository):
+        """
+        Initializes the QueryDocsByObjectIds command with the document repository.
+
+        :param document_repo: The repository for managing document operations.
+        :type document_repo: DocumentRepository
+        """
+
+        # Assign the document repository to the command instance.
+        self.document_repo = document_repo
+
+    # * method: execute
+    def execute(self, object_ids: List[str], **kwargs) -> List[Document]:
+        """
+        Executes the command to query documents by their object IDs.
+
+        :param object_ids: List of object IDs of the documents to query.
+        :type object_ids: List[str]
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: List of documents matching the specified object IDs.
+        :rtype: List[DocumentContract]
+        """
+        
+        # Call the repository method to query documents by their object IDs.
+        return self.document_repo.query_by_object_ids(object_ids=object_ids)
+    
 # ** command: update_doc_name
 class UpdateDocName(Command):
     """
