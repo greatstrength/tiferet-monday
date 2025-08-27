@@ -58,6 +58,40 @@ class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
             **data
         ).map()
     
+    # * method: query_by_object_ids
+    def query_by_object_ids(self, object_ids: List[str]) -> List[DocumentContract]:
+        """
+        Queries documents by their object IDs using the Monday.com API.
+
+        :param object_ids: List of object IDs of the documents to retrieve.
+        :type object_ids: List[str]
+        :return: List of documents matching the specified object IDs.
+        :rtype: List[DocumentContract]
+        """
+
+        # Execute the query to retrieve documents by their object IDs.
+        data = self.execute_query(
+            query="""
+                query ($objectIds: [ID!]!) {
+                    docs (object_ids: $objectIds) {
+                        id
+                        name
+                        object_id
+                        blocks {
+                            id
+                            type
+                            content
+                        }
+                    }
+                }
+            """,
+            variables={'objectIds': object_ids},
+            start_node=lambda data: data.get('docs', [])
+        )
+
+        # Map the retrieved document data to DocumentContract instances.
+        return [DataObject.from_data(DocumentData, **doc).map() for doc in data]
+    
     # * method: update_doc_name
     def update_doc_name(self, doc_id: str | int, name: str):
         """
