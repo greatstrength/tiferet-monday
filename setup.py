@@ -9,7 +9,7 @@ config = {
     'url': r'https://github.com/greatstrength/tiferet-monday',
     'download_url': r'https://github.com/greatstrength/tiferet-monday',
     'author_email': 'andrew@greatstrength.me',
-    'version': '0.1.0a0',
+    'version': '1.0.0a1',
     'license': 'BSD 3',
     'install_requires': [
         'tiferet>=1.1.0',
