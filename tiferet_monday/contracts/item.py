@@ -1,7 +1,7 @@
 # *** imports
 
 # ** core
-from typing import List, Any
+from typing import List, Dict, Any
 
 # ** infra
 from tiferet.contracts import *
@@ -16,12 +16,6 @@ class ItemContract(ModelContract):
     
     # * attribute: id
     id: str
-
-    # * attribute: name
-    name: str
-
-    # * attribute: board_id
-    board_id: str
 
 # ** contract: column_value
 class ColumnValueContract(ModelContract):
@@ -62,20 +56,11 @@ class ItemDetailContract(ItemContract):
     # * attribute: group_id
     group_id: str
 
-    # * attribute: column_values
-    column_values: List[ColumnValueContract]
+    # * attribute: parent_item_id
+    parent_item_id: str
 
     # * attribute: description
     description: ItemDescriptionContract
-
-# ** contract: subitem
-class SubitemContract(ItemContract):
-    """
-    Represents a subitem in a Monday.com item.
-    """
-
-    # * attribute: parent_item_id
-    parent_item_id: str
 
     # * attribute: column_values
     column_values: List[ColumnValueContract]
@@ -114,14 +99,14 @@ class ItemRepository(Repository):
     
     # * method: query_subitems
     @abstractmethod
-    def query_subitems(self, parent_item_id: str | int) -> List[SubitemContract]:
+    def query_subitems(self, parent_item_id: str | int) -> List[ItemContract]:
         """
         Queries subitems for a given parent item ID.
 
         :param parent_item_id: ID of the parent item for which to query subitems.
         :type parent_item_id: str | int
-        :return: List of subitems for the specified parent item.
-        :rtype: List[SubitemContract]
+        :return: List of subitems under the specified parent item.
+        :rtype: List[ItemContract]
         """
         raise NotImplementedError('The query_subitems method must be implemented by the item repository.')
 
@@ -144,7 +129,7 @@ class ItemRepository(Repository):
     
     # * method: create_subitem
     @abstractmethod
-    def create_subitem(self, parent_item_id: str | int, item_name: str) -> Any:
+    def create_subitem(self, parent_item_id: str | int, item_name: str, column_values: Dict[str, Any]) -> ItemContract:
         """
         Creates a subitem under the specified item.
 
@@ -152,7 +137,9 @@ class ItemRepository(Repository):
         :type parent_item_id: str | int
         :param item_name: Name of the subitem to be created.
         :type item_name: str
-        :return: Result of the subitem creation operation.
-        :rtype: Any
+        :param column_values: Optional dictionary of column values to set for the new subitem.
+        :type column_values: Dict[str, Any]
+        :return: The created subitem.
+        :rtype: ItemContract
         """
         raise NotImplementedError('The create_subitem method must be implemented by the item repository.')
