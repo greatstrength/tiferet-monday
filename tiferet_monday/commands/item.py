@@ -32,7 +32,7 @@ class QueryDetailById(Command):
         self.item_repo = item_repo
 
     # ** method: execute
-    def execute(self, item_id: str | int, **kwargs) -> Item:
+    def execute(self, item_id: str | int, **kwargs) -> ItemDetailContract:
         """
         Executes the command to query detailed information about an item by its ID.
 
@@ -41,7 +41,7 @@ class QueryDetailById(Command):
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         :return: Detailed information about the item.
-        :rtype: Item
+        :rtype: ItemDetailContract
         """
         
         # Call the repository method to query details by ID.
@@ -176,7 +176,7 @@ class CreateSubitem(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, parent_item_id: str | int, item_name: str, **kwargs) -> Any:
+    def execute(self, parent_item_id: str | int, item_name: str, column_values: Dict[str, Any] = {}, **kwargs) -> ItemContract:
         """
         Executes the command to create a subitem under the specified parent item.
 
@@ -184,14 +184,17 @@ class CreateSubitem(Command):
         :type parent_item_id: str | int
         :param item_name: Name of the subitem to be created.
         :type item_name: str
+        :param column_values: Optional dictionary of column values to set for the new subitem.
+        :type column_values: Dict[str, Any]
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
-        :return: Result of the subitem creation operation.
-        :rtype: Any
+        :return: The created subitem.
+        :rtype: ItemContract
         """
         
         # Call the repository method to create the subitem.
         return self.item_repo.create_subitem(
             parent_item_id=parent_item_id,
-            item_name=item_name
+            item_name=item_name,
+            column_values=column_values
         )
