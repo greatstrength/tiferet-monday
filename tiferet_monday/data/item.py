@@ -1,8 +1,5 @@
 # *** imports
 
-# ** core
-import json
-
 # ** infra
 from tiferet.data import *
 
@@ -11,8 +8,7 @@ from ..models.item import *
 from .column_value import ColumnValueData
 from ..contracts.item import (
     ItemContract,
-    ItemDetailContract,
-    SubitemContract
+    ItemDetailContract
 )
 
 # *** data
@@ -134,7 +130,7 @@ class ItemDetailData(DataObject, ItemDetail):
         """
         serialize_when_none = False
         roles = dict(
-            to_model=DataObject.deny('board', 'group', 'column_values', 'description'),
+            to_model=DataObject.deny('board', 'group', 'parent_item', 'description', 'column_values'),
             to_data=DataObject.deny('description')
         )
 
@@ -153,6 +149,15 @@ class ItemDetailData(DataObject, ItemDetail):
         required=True,
         metadata=dict(
             description='The group to which the item belongs.'
+        )
+    )
+
+    # * attribute: parent_item
+    parent_item = ModelType(
+        ItemData,
+        required=True,
+        metadata=dict(
+            description='The parent item to which this subitem belongs.'
         )
     )
 
@@ -195,65 +200,6 @@ class ItemDetailData(DataObject, ItemDetail):
             ItemDetail,
             board_id=self.board.id,
             group_id=self.group.id,
-            column_values=[value.map() for value in self.column_values]
-        )
-    
-# ** data: subitem_data
-class SubitemData(DataObject, Subitem):
-    """
-    Represents the data required to create a subitem in a Monday.com item.
-    """
-
-    class Options():
-        """
-        Options for the SubitemData class.
-        """
-        serialize_when_none = False
-        roles = dict(
-            to_model=DataObject.deny('board', 'parent_item', 'column_values', 'updates'),
-            to_data=DataObject.allow()
-        )
-
-    # * attribute: board
-    board = ModelType(
-        ItemBoardData,
-        required=True,
-        metadata=dict(
-            description='The board to which the subitem belongs.'
-        )
-    )
-
-    # * attribute: parent_item
-    parent_item = ModelType(
-        ItemData,
-        required=True,
-        metadata=dict(
-            description='The parent item to which this subitem belongs.'
-        )
-    )
-
-    # * attribute: column_values
-    column_values = ListType(
-        ModelType(ColumnValueData),
-        default=[],
-        metadata=dict(
-            description='A list of column values associated with the subitem.'
-        )
-    )
-
-    # * method: map
-    def map(self) -> SubitemContract:
-        """
-        Maps the data object to a Subitem model.
-
-        :return: A Subitem model instance.
-        :rtype: Subitem
-        """
-        
-        return super().map(
-            Subitem,
-            board_id=self.board.id,
             parent_item_id=self.parent_item.id,
-            column_values=[value.map() for value in self.column_values],
-            updates=self.updates
+            column_values=[value.map() for value in self.column_values]
         )
