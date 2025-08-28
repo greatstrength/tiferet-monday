@@ -1,10 +1,15 @@
 # *** imports
 
+# ** core
+from typing import List, Dict, Any
+import json
+
 # ** infra
 from tiferet.models import *
 
 # ** app
-from ..models.doc import DocumentBlock
+from .doc import DocumentBlock
+from .column_value import *
 
 # *** models
 
@@ -82,57 +87,6 @@ class Update(Entity):
         default=[],
         metadata=dict(
             description='A list of replies associated with the update.'
-        )
-    )
-
-# ** model: column_value
-class ColumnValue(ValueObject):
-    """
-    Represents a column value in a Monday.com item.
-    """
-
-    # * attribute: id
-    id = StringType(
-        required=True,
-        metadata=dict(
-            description='The unique identifier of the column.'
-        )
-    )
-
-    # * attribute: name
-    name = StringType(
-        required=True,
-        metadata=dict(
-            description='The column title.'
-        )
-    )
-
-    # * attribute: type
-    type = StringType(
-        required=True,
-        metadata=dict(
-            description='The type of the column value.'
-        )
-    )
-
-    # * attribute: value
-    value = StringType(
-        metadata=dict(
-            description='The actual value of the column.'
-        )
-    )
-
-    # * attribute: description
-    description = StringType(
-        metadata=dict(
-            description='A description of the column.'
-        )
-    )
-    
-    # * attribute: settings_str
-    settings_str = StringType(
-        metadata=dict(
-            description='A JSON string representing the settings of the column.'
         )
     )
 
@@ -228,6 +182,75 @@ class ItemDetail(Item):
             description='A list of column values associated with the item.'
         )
     )
+
+    # * method: new
+    @staticmethod
+    def new(
+        id: str, 
+        name: str, 
+        board_id: str, 
+        group_id: str, 
+        description: Dict[str, Any] = None,
+        column_values: List[Dict[str, Any]] = [], 
+        updates: List[Dict[str, Any]] = []
+    ) -> 'ItemDetail':
+        """
+        Creates a new ItemDetail instance with the provided attributes.
+
+        :param id: The unique identifier of the item.
+        :type id: str
+        :param name: The name of the item.
+        :type name: str
+        :param board_id: The unique identifier of the board to which the item belongs.
+        :type board_id: str
+        :param group_id: The unique identifier of the group to which the item belongs.
+        :type group_id: str
+        :param description: The description of the item as a dictionary.
+        :type description: Dict[str, Any]
+        :param column_values: A list of column values as dictionaries.
+        :type column_values: List[Dict[str, Any]]
+        :param updates: A list of updates as dictionaries.
+        :type updates: List[Dict[str, Any]]
+        :return: A new ItemDetail instance.
+        :rtype: ItemDetail
+        """
+
+        # Create column values list first.
+        column_values = [
+            ColumnValue.new(**cv) for cv in column_values
+        ]
+        
+        # Create and return a new ItemDetail instance with the provided attributes.
+        return ModelObject.new(
+            ItemDetail,
+            id=id,
+            name=name,
+            board_id=board_id,
+            group_id=group_id,
+            description=description,
+            updates=updates,
+            column_values=column_values,
+        )
+
+    # method: get_column_value
+    def get_column_value(self, column_id_or_title) -> ColumnValue | None:
+        """
+        Retrieves a column value by its ID.
+
+        :param column_id: The unique identifier of the column.
+        :type column_id: str
+        :return: The ColumnValue object if found, otherwise None.
+        :rtype: ColumnValue | None
+        """
+        
+        # First search on title, as it's more human friendly.
+        column_value: ColumnValue = next((cv for cv in self.column_values if cv.name == column_id_or_title), None)
+        
+        # Return the formatted value if found by title, otherwise search by ID.
+        if column_value:
+            return column_value
+        else:
+            return next((cv for cv in self.column_values if cv.id == column_id_or_title), None)
 
 # ** model: subitem
 class Subitem(Item):

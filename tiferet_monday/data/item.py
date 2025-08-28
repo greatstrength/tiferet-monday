@@ -1,98 +1,22 @@
 # *** imports
 
+# ** core
+import json
+
 # ** infra
 from tiferet.data import *
 
 # ** app
 from ..models.item import *
+from .column_value import ColumnValueData
 from ..contracts.item import (
-    ColumnValueContract,
     ItemContract,
     ItemDetailContract,
     SubitemContract
 )
 
 # *** data
-
-# ** data: column_data
-class ColumnData(DataObject):
-    """
-    Represents a column in a Monday.com item.
-    """
-
-    class Options():
-        """
-        Options for the ColumnData class.
-        """
-        serialize_when_none = False
-        roles = dict(
-            to_model=DataObject.deny('title', 'description', 'settings_str'),
-            to_data=DataObject.allow()
-        )
-
-    # * attribute: title
-    title = StringType(
-        metadata=dict(
-            description='The title of the column.'
-        )   
-    )
-
-    # * attribute: description
-    description = StringType(
-        metadata=dict(
-            description='A description of the column.'
-        )
-    )
-
-    # * attribute: settings_str
-    settings_str = StringType(
-        metadata=dict(
-            description='A JSON string representing the settings of the column.'
-        )
-    )
-
-# ** data: column_value_data
-class ColumnValueData(DataObject, ColumnValue):
-    """
-    Represents a column value in a Monday.com item.
-    """
-
-    class Options():
-        """
-        Options for the ColumnValueData class.
-        """
-        serialize_when_none = False
-        roles = dict(
-            to_model=DataObject.deny('column'),
-            to_data=DataObject.allow()
-        )
-
-    # * attribute: column
-    column = ModelType(
-        ColumnData,
-        required=True,
-        metadata=dict(
-            description='The column to which the value belongs.'
-        )
-    )
-
-    # * method: map
-    def map(self) -> ColumnValueContract:
-        """
-        Maps the data object to a ColumnValue model.
-
-        :return: A ColumnValue model instance.
-        :rtype: ColumnValueContract
-        """
         
-        return super().map(
-            ColumnValue,
-            name=self.column.title,
-            description=self.column.description,
-            settings_str=self.column.settings_str
-        )
-
-
 # ** data: item_board_data
 class ItemBoardData(DataObject):
     """
@@ -254,7 +178,7 @@ class ItemDetailData(DataObject, ItemDetail):
         # Convert the data object to a primitive dictionary using the specified role.
         return dict(
             super().to_primitive(role=role, **kwargs),
-            description=self.description.to_primitive()
+            description=self.description.to_primitive() if self.description else None
         )
 
     # * method: map
