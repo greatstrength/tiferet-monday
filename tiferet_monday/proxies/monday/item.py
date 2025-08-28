@@ -1,5 +1,8 @@
 # *** imports
 
+# ** core
+import json
+
 # ** infra
 from moncli import api_v2 as api
 
@@ -45,8 +48,15 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                     items(ids: [$item_id]) {
                         id
                         name
-                        board { id }
-                        group { id }
+                        board {
+                            id
+                        }
+                        group {
+                            id
+                        }
+                        parent_item { 
+                            id 
+                        }
                         description {
                             id
                             blocks (limit: 1000, page: 1) {
@@ -150,14 +160,14 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         ).map() for item in data]
     
     # * method: query_subitems
-    def query_subitems(self, parent_item_id: str | int) -> List[SubitemContract]:
+    def query_subitems(self, parent_item_id: str | int) -> List[ItemContract]:
         """
         Queries subitems for a given parent item ID using the Moncli client.
 
         :param parent_item_id: ID of the parent item for which to query subitems.
         :type parent_item_id: str | int
         :return: List of subitems for the specified parent item.
-        :rtype: List[SubitemContract]
+        :rtype: List[ItemContract]
         """
 
         # Execute the query to retrieve subitems.
@@ -170,19 +180,6 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                             name
                             board {
                                 id
-                            }
-                            parent_item { 
-                                id 
-                            }
-                            column_values {
-                                id
-                                column {
-                                    title
-                                    description
-                                    settings_str
-                                }
-                                type
-                                value
                             }
                             updates {
                                 id
@@ -209,7 +206,7 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
 
         # Map the retrieved subitems data to SubitemContract.
         return [DataObject.from_data(
-            SubitemData,
+            ItemData,
             **subitem
         ).map() for subitem in data]
 
@@ -238,7 +235,7 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         )
     
     # * method: create_subitem
-    def create_subitem(self, parent_item_id: str | int, item_name: str) -> Any:
+    def create_subitem(self, parent_item_id: str | int, item_name: str, column_values: Dict[str, Any] = {}) -> ItemContract:
         """
         Creates a subitem under the specified item using the Moncli client.
 
@@ -250,20 +247,28 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         :rtype: Any
         """
 
-        # Import and moncli api_v2 handlers.
-        return api.requests.execute_query(
-            api_key=self.api_key,
+        # Execute the mutation to create a subitem.
+        data = self.execute_query(
             query="""
-                mutation ($parent_item_id: ID!, $item_name: String!) {
-                    create_subitem(parent_item_id: $parent_item_id, item_name: $item_name) {
+                mutation ($parent_item_id: ID!, $item_name: String!, $column_values: JSON!) {
+                    create_subitem(parent_item_id: $parent_item_id, item_name: $item_name, column_values: $column_values) {
                         id
-                        name  
+                        name
+                        board {
+                            id
+                        }
                     }
                 }
             """,
             variables={
                 'parent_item_id': int(parent_item_id),
-                'item_name': item_name
+                'item_name': item_name,
+                'column_values': json.dumps(column_values)
             },
-            query_name='create_subitem',
+            start_node=lambda data: data.get('create_subitem', None)
         )
+
+        return DataObject.from_data(
+            ItemData,
+            **data
+        ).map() if data else None
