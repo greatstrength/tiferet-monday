@@ -166,6 +166,14 @@ class ItemDetail(Item):
         )
     )
 
+    # * attribute: parent_item_id
+    parent_item_id = StringType(
+        required=True,
+        metadata=dict(
+            description='The unique identifier of the parent item to which this subitem belongs.'
+        )
+    )
+
     # * attribute: description
     description = ModelType(
         ItemDescription,
@@ -190,6 +198,7 @@ class ItemDetail(Item):
         name: str, 
         board_id: str, 
         group_id: str, 
+        parent_item_id: str = None,
         description: Dict[str, Any] = None,
         column_values: List[Dict[str, Any]] = [], 
         updates: List[Dict[str, Any]] = []
@@ -205,6 +214,8 @@ class ItemDetail(Item):
         :type board_id: str
         :param group_id: The unique identifier of the group to which the item belongs.
         :type group_id: str
+        :param parent_item_id: The unique identifier of the parent item (for subitems).
+        :type parent_item_id: str
         :param description: The description of the item as a dictionary.
         :type description: Dict[str, Any]
         :param column_values: A list of column values as dictionaries.
@@ -227,6 +238,7 @@ class ItemDetail(Item):
             name=name,
             board_id=board_id,
             group_id=group_id,
+            parent_item_id=parent_item_id,
             description=description,
             updates=updates,
             column_values=column_values,
@@ -251,26 +263,3 @@ class ItemDetail(Item):
             return column_value
         else:
             return next((cv for cv in self.column_values if cv.id == column_id_or_title), None)
-
-# ** model: subitem
-class Subitem(Item):
-    """
-    Represents a subitem in a Monday.com item.
-    """
-
-    # * attribute: parent_item_id
-    parent_item_id = StringType(
-        required=True,
-        metadata=dict(
-            description='The unique identifier of the parent item to which this subitem belongs.'
-        )
-    )
-
-    # * attribute: column_values
-    column_values = ListType(
-        ModelType(ColumnValue),
-        default=[],
-        metadata=dict(
-            description='A list of column values associated with the subitem.'
-        )
-    )
