@@ -64,6 +64,29 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                             }
                             type
                             value
+                            ... on StatusValue {
+                                index
+                                text
+                            }
+                            ... on NumbersValue {
+                                number
+                            }
+                            ... on BoardRelationValue {
+                                linked_item_ids
+                            }
+                            ... on FileValue {
+                            files {
+                              ... on FileDocValue {
+                                object_id
+                              }
+                              ... on FileLinkValue {
+                                file_id
+                              }
+                              ... on FileAssetValue {
+                                asset_id
+                              }
+                            }
+                          }
                         }
                     }
                 }
