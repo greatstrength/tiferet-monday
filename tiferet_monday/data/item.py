@@ -200,6 +200,6 @@ class ItemDetailData(DataObject, ItemDetail):
             ItemDetail,
             board_id=self.board.id,
             group_id=self.group.id,
-            parent_item_id=self.parent_item.id,
+            parent_item_id=self.parent_item.id if self.parent_item else None,
             column_values=[value.map() for value in self.column_values]
         )
