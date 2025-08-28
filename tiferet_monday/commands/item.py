@@ -102,7 +102,7 @@ class QuerySubitems(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, parent_item_id: str | int, **kwargs) -> List[Subitem]:
+    def execute(self, parent_item_id: str | int, **kwargs) -> List[ItemContract]:
         """
         Executes the command to query subitems of the specified parent item.
 

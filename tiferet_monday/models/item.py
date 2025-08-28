@@ -160,7 +160,6 @@ class ItemDetail(Item):
 
     # * attribute: group_id
     group_id = StringType(
-        required=True,
         metadata=dict(
             description='The unique identifier of the group to which the item belongs.'
         )
@@ -168,7 +167,6 @@ class ItemDetail(Item):
 
     # * attribute: parent_item_id
     parent_item_id = StringType(
-        required=True,
         metadata=dict(
             description='The unique identifier of the parent item to which this subitem belongs.'
         )
