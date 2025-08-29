@@ -85,6 +85,15 @@ class ColumnValueData(DataObject, ColumnValue):
         )
     )
 
+    # * attribute: persons_and_teams
+    persons_and_teams = ListType(
+        DictType(StringType),
+        default=[],
+        metadata=dict(
+            description='A list of persons and teams associated with this column value (for People columns).'
+        )
+    )
+
     # * attribute: number
     number = IntegerType(
         metadata=dict(
@@ -107,6 +116,14 @@ class ColumnValueData(DataObject, ColumnValue):
         default=[],
         metadata=dict(
             description='A list of files associated with this column value (for File columns).'
+        )
+    )
+
+    # * attribute: file
+    file = DictType(
+        StringType, 
+        metadata=dict(
+            description='A single file associated with this column value (for File columns).'
         )
     )
 
@@ -133,6 +150,11 @@ class ColumnValueData(DataObject, ColumnValue):
                 text=self.text            
             ))
 
+        if self.type == 'people':
+            attributes.update(dict(
+                persons_and_teams=self.persons_and_teams            
+            ))
+
         # If the column type is 'number', set the value to the numeric representation.
         if self.type == 'number':
             attributes.update(dict(
@@ -149,6 +171,11 @@ class ColumnValueData(DataObject, ColumnValue):
         if self.type == 'file':
             attributes.update(dict(
                 files=self.files            
+            ))
+        
+        if self.type == 'doc':
+            attributes.update(dict(
+                file=self.file            
             ))
 
         return super().map(
