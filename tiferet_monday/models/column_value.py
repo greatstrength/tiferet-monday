@@ -1,5 +1,8 @@
 # *** imports
 
+# ** core
+from typing import List
+
 # ** app
 from tiferet.models import *
 
@@ -63,6 +66,7 @@ class ColumnValue(ValueObject):
         value: str = None,
         description: str = None,
         settings_str: str = None,
+        init_type: bool = True,
         **kwargs
     ) -> 'ColumnValue':
         """
@@ -80,21 +84,36 @@ class ColumnValue(ValueObject):
         :type description: str, optional
         :param settings_str: A JSON string representing the settings of the column.
         :type settings_str: str, optional
+        :param init_type: Whether to initialize the specific subclass based on the type.
+        :type init_type: bool, optional
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         :return: A new instance of ColumnValue.
         :rtype: ColumnValue
         """
         
+        # Create a mapping of column types to their corresponding classes.
         type_map = {
             'status': StatusValue,
+            'people': PeopleValue,
             'numbers': NumbersValue,
             'board_relation': BoardRelationValue,
             'file': FileValue,
+            'doc': DocValue
         }
 
+        # If init_type is False, use the base ColumnValue class.
+        if not init_type:
+            type = ColumnValue
+
+        # Initialize the specific subclass based on the type.
+        # If the type is not in the type_map, default to ColumnValue.
+        else:
+            type = type_map.get(type, ColumnValue)
+
+        # Return a new instance of the appropriate class.
         return ModelObject.new(
-            type_map.get(type, ColumnValue),
+            type=type,
             id=id,
             name=name,
             type=type,
@@ -123,6 +142,37 @@ class StatusValue(ColumnValue):
             description='The text representation of the status (for Status columns).'
         )
     )
+
+# ** model: people_value
+class PeopleValue(ColumnValue):
+    """
+    Represents a people column value in a Monday.com item.
+    """
+
+    # * attribute: persons_and_teams
+    persons_and_teams = ListType(
+        DictType(StringType),
+        default=[],
+        metadata=dict(
+            description='A list of persons and teams associated with this column value (for People columns).'
+        )
+    )
+
+    # * method: get_person_ids
+    def get_person_ids(self) -> List[str]:
+        """
+        Extracts and returns a list of person IDs from the persons_and_teams.
+
+        :return: A list of person IDs.
+        :rtype: list[str]
+        """
+
+        # Extract person IDs from the persons_and_teams list of dictionaries.
+        person_ids = []
+        for entry in self.persons_and_teams:
+            if entry.get('kind') == 'person':
+                person_ids.append(entry['id'])
+        return person_ids
 
 # ** model: numbers_value
 class NumbersValue(ColumnValue):
@@ -175,8 +225,36 @@ class FileValue(ColumnValue):
         :return: A list of object IDs.
         :rtype: list[str]
         """
+
+        # Get list of object ids from the files list of dictionaries.
         object_ids = []
         for file in self.files:
             if 'object_id' in file:
                 object_ids.append(file['object_id'])
         return object_ids
+    
+# ** model: doc_value
+class DocValue(ColumnValue):
+    """
+    Represents a document column value in a Monday.com item.
+    """
+
+    # * attribute: file
+    file = DictType(
+        StringType, 
+        metadata=dict(
+            description='A single file associated with this column value (for File columns).'
+        )
+    )
+
+    # * method: get_object_id
+    def get_object_id(self) -> str:
+        """
+        Extracts and returns the object ID from the file.
+
+        :return: The object ID.
+        :rtype: str
+        """
+
+        # Get object id from the file dictionary.
+        return self.file.get('object_id', None)
