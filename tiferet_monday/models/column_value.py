@@ -36,6 +36,13 @@ class ColumnValue(ValueObject):
         )
     )
 
+    # * attribute: text
+    text = StringType(
+        metadata=dict(
+            description='The text representation of the column value.'
+        )
+    )
+
     # * attribute: value
     value = StringType(
         metadata=dict(
@@ -63,10 +70,10 @@ class ColumnValue(ValueObject):
         id: str,
         name: str,
         type: str,
+        text: str = None,
         value: str = None,
         description: str = None,
         settings_str: str = None,
-        init_type: bool = True,
         **kwargs
     ) -> 'ColumnValue':
         """
@@ -78,14 +85,14 @@ class ColumnValue(ValueObject):
         :type name: str
         :param type: The type of the column value.
         :type type: str
+        :param text: The text representation of the column value.
+        :type text: str, optional
         :param value: The actual value of the column.
         :type value: str, optional
         :param description: A description of the column.
         :type description: str, optional
         :param settings_str: A JSON string representing the settings of the column.
         :type settings_str: str, optional
-        :param init_type: Whether to initialize the specific subclass based on the type.
-        :type init_type: bool, optional
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         :return: A new instance of ColumnValue.
@@ -102,21 +109,13 @@ class ColumnValue(ValueObject):
             'doc': DocValue
         }
 
-        # If init_type is False, use the base ColumnValue class.
-        if not init_type:
-            type = ColumnValue
-
-        # Initialize the specific subclass based on the type.
-        # If the type is not in the type_map, default to ColumnValue.
-        else:
-            type = type_map.get(type, ColumnValue)
-
         # Return a new instance of the appropriate class.
         return ModelObject.new(
-            type=type,
+            type_map.get(type, ColumnValue),
             id=id,
             name=name,
             type=type,
+            text=text,
             value=value,
             description=description,
             settings_str=settings_str,
@@ -218,7 +217,7 @@ class FileValue(ColumnValue):
     )
 
     # * method: get_object_ids
-    def get_object_ids(self) -> list[str]:
+    def get_object_ids(self) -> List[str]:
         """
         Extracts and returns a list of object IDs from the files.
 

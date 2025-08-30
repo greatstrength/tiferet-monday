@@ -70,33 +70,9 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
                             column {
                                 title
                                 description
-                                settings_str
                             }
                             type
-                            value
-                            ... on StatusValue {
-                                index
-                                text
-                            }
-                            ... on NumbersValue {
-                                number
-                            }
-                            ... on BoardRelationValue {
-                                linked_item_ids
-                            }
-                            ... on FileValue {
-                            files {
-                              ... on FileDocValue {
-                                object_id
-                              }
-                              ... on FileLinkValue {
-                                file_id
-                              }
-                              ... on FileAssetValue {
-                                asset_id
-                              }
-                            }
-                          }
+                            text
                         }
                     }
                 }
@@ -158,6 +134,88 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
             ItemData,
             **item
         ).map() for item in data]
+    
+    # * method: query_column_values
+    def query_column_values(self, item_id: str | int, column_ids: List[str] = []) -> List[ColumnValueContract]:
+        """
+        Queries column values for a given item ID using the Moncli client.
+
+        :param item_id: ID of the item for which to query column values.
+        :type item_id: str | int
+        :return: List of column values for the specified item.
+        :rtype: List[ColumnValueContract]
+        """
+
+        # Execute the query to retrieve column values.
+        data = self.execute_query(
+            query="""
+                query ($item_id: ID!, $column_ids: [String!]) {
+                    items (ids: [$item_id]) {
+                        column_values (ids: $column_ids) {
+                            id
+                            column {
+                                title
+                                description
+                                settings_str
+                            }
+                            type
+                            value
+                            ... on StatusValue {
+                                index
+                                text
+                            }
+                            ... on NumbersValue {
+                                number
+                            }
+                            ... on BoardRelationValue {
+                                linked_item_ids
+                            }
+                            ... on FileValue {
+                                files {
+                                    ... on FileDocValue {
+                                        object_id
+                                    }
+                                    ... on FileLinkValue {
+                                        file_id
+                                    }
+                                    ... on FileAssetValue {
+                                        asset_id
+                                    }
+                                }
+                            }
+                            ... on PeopleValue {
+                                persons_and_teams {
+                                    id
+                                    kind
+                                }
+                            }
+                            ... on DocValue {
+                                file {
+                                    ... on FileDocValue {
+                                        object_id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            """,
+            variables={
+                'item_id': int(item_id),
+                'column_ids': column_ids
+            },
+            start_node=lambda data: data.get('items', [])[0].get('column_values', [])
+        )
+
+        # If no data is returned, return an empty list.
+        if not data:
+            return []
+
+        # Map the retrieved column values data to ColumnValueContract.
+        return tuple([DataObject.from_data(
+            ColumnValueData,
+            **cv
+        ).map() for cv in data])
     
     # * method: query_subitems
     def query_subitems(self, parent_item_id: str | int) -> List[ItemContract]:

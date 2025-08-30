@@ -127,6 +127,20 @@ class ItemRepository(Repository):
         """
         raise NotImplementedError('The update_simple_column_value method must be implemented by the item repository.')
     
+    # * method: query_column_values
+    @abstractmethod
+    def query_column_values(self, item_id: str | int, column_ids: List[str] = []) -> List[ColumnValueContract]:
+        """
+        Queries column values for a given item ID.
+        :param item_id: ID of the item for which to query column values.
+        :type item_id: str | int
+        :param column_ids: Optional list of column IDs to filter the results.
+        :type column_ids: List[str]
+        :return: List of column values for the specified item.
+        :rtype: List[ColumnValueContract]
+        """
+        raise NotImplementedError('The query_column_values method must be implemented by the item repository.')
+    
     # * method: create_subitem
     @abstractmethod
     def create_subitem(self, parent_item_id: str | int, item_name: str, column_values: Dict[str, Any]) -> ItemContract:

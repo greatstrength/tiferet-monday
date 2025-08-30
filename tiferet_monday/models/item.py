@@ -1,8 +1,7 @@
 # *** imports
 
 # ** core
-from typing import List, Dict, Any
-import json
+from typing import List, Dict, Any, Tuple
 
 # ** infra
 from tiferet.models import *
@@ -261,3 +260,23 @@ class ItemDetail(Item):
             return column_value
         else:
             return next((cv for cv in self.column_values if cv.id == column_id_or_title), None)
+        
+    # * method: get_column_values
+    def get_column_values(self, column_ids_or_titles: List[str]) -> Tuple[ColumnValue]:
+        """
+        Retrieves multiple column values by their IDs.
+
+        :param column_ids_or_titles: A list of unique identifiers or titles of the columns.
+        :type column_ids_or_titles: List[str]
+        :return: A list of ColumnValue objects matching the provided IDs.
+        :rtype: List[ColumnValue]
+        """
+        
+        # Create map of column ids for quick lookup.
+        column_value_map = {cv.id: cv for cv in self.column_values}
+
+        # Add titles to the map as well.
+        column_value_map.update({cv.name: cv for cv in self.column_values}) 
+
+        # Filter and return the column values that match the provided IDs in order.
+        return tuple([column_value_map[id_or_title] for id_or_title in column_ids_or_titles])

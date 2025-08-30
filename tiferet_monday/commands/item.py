@@ -82,6 +82,46 @@ class QueryByIds(Command):
         # Call the repository method to query items by their IDs.
         return self.item_repo.query_by_ids(item_ids=item_ids)
     
+# ** command: query_column_value
+class QueryColumnValues(Command):
+    """
+    Command for querying column values of a specified item.
+    """
+    
+    # * attribute: item_repo
+    item_repo: ItemRepository
+
+    # * init
+    def __init__(self, item_repo: ItemRepository):
+        """
+        Initializes the QueryColumnValues command with the item repository.
+
+        :param item_repo: The repository for managing item operations.
+        :type item_repo: ItemRepository
+        """
+        self.item_repo = item_repo
+
+    # * method: execute
+    def execute(self, item_id: str | int, column_ids: List[str] = [], **kwargs) -> Tuple[ColumnValue]:
+        """
+        Executes the command to query column values of the specified item.
+
+        :param item_id: ID of the item whose column values will be queried.
+        :type item_id: str | int
+        :param column_ids: Optional list of column IDs to filter the results.
+        :type column_ids: List[str]
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: Tuple of column values for the specified item.
+        :rtype: Tuple[ColumnValue]
+        """
+        
+        # Call the repository method to query column values.
+        column_value_map = {cv.id: cv for cv in self.item_repo.query_column_values(item_id=item_id, column_ids=column_ids)}
+
+        # Return the column values in the order of the requested column IDs.
+        return tuple(column_value_map[cid] for cid in column_ids if cid in column_value_map)
+    
 # ** command: query_subitems
 class QuerySubitems(Command):
     """

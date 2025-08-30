@@ -128,10 +128,12 @@ class ColumnValueData(DataObject, ColumnValue):
     )
 
     # * method: map
-    def map(self) -> ColumnValueContract:
+    def map(self, map_to_type: bool = True) -> ColumnValueContract:
         """
         Maps the data object to a ColumnValue model.
 
+        :param map_to_type: Whether to map to a specific ColumnValue subtype based on the column type.
+        :type map_to_type: bool
         :return: A ColumnValue model instance.
         :rtype: ColumnValueContract
         """
@@ -142,6 +144,13 @@ class ColumnValueData(DataObject, ColumnValue):
             description=self.column.description,
             settings_str=self.column.settings_str,
         )
+
+        # If map_to_type is False, return a generic ColumnValue model.
+        if not map_to_type:
+            return super().map(
+                ColumnValue,
+                **attributes
+            )
 
         # If the column type is 'status', set the value to a JSON string of index and text.
         if self.type == 'status':
@@ -173,11 +182,13 @@ class ColumnValueData(DataObject, ColumnValue):
                 files=self.files            
             ))
         
+        # If the column type is 'doc', set the value to the file dictionary.
         if self.type == 'doc':
             attributes.update(dict(
                 file=self.file            
             ))
 
+        # Map to the appropriate ColumnValue subtype based on the column type.
         return super().map(
             ColumnValue,
             **attributes
