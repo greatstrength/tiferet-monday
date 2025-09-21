@@ -29,6 +29,7 @@ class MondayFeatureContext(FeatureContext):
     ) -> Any:
         '''
         Handle retry logic based on the provided error information.
+
         :param error: The original error encountered.
         :type error: TiferetError
         :param monday_error: The specific error message from Monday.com.
@@ -54,7 +55,7 @@ class MondayFeatureContext(FeatureContext):
     ) -> Any:
         '''
         Handle the execution of a command with the provided request and command-handling options.
-        
+
         :param command: The command to execute.
         :type command: Command
         :param request: The request context object.
