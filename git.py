@@ -23,6 +23,33 @@ def create_and_push_branch(git_branch: str):
     subprocess.run(['git', 'checkout', '-b', git_branch])
     subprocess.run(['git', 'push', '--set-upstream', 'origin', git_branch])
 
+def checkout_branch(github_branch: str):
+    '''
+    Checkout a specified git branch.
+    :param github_branch: The name of the git branch to checkout.
+    '''
+
+    print(f'Checking out branch {github_branch}...')
+    subprocess.run(['git', 'checkout', github_branch])
+
+def stage_file(file_path: str):
+    '''
+    Stage a file for commit.
+    :param file_path: The path to the file to stage.
+    '''
+
+    print(f'Staging file {file_path}...')
+    subprocess.run(['git', 'add', file_path])
+
+def commit_changes(commit_message: str):
+    '''
+    Commit staged changes with a commit message.
+    :param commit_message: The commit message to use.
+    '''
+
+    print(f'Committing changes with message: {commit_message}')
+    subprocess.run(['git', 'commit', '-m', commit_message])
+
 def delete_local_branch(git_branch: str):
     '''
     Delete a local git branch.
