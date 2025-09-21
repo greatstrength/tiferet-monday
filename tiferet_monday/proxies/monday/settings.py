@@ -78,7 +78,17 @@ class MondayApiProxy(object):
         """
         # Check for errors in the response and raise an error if found.
         if 'errors' in response:
-            raise_error.execute('MONDAY_API_ERROR', f'A Monday.com API error occurred: {str(response)}', str(response))
+            
+            # Retrieve the complexity limit error if present.
+            complexity_limit_error = next((error for error in response['errors'] if error.get('extensions', {}).get('code') == 'COMPLEXITY_BUDGET_EXHAUSTED'), None)
+            if complexity_limit_error:
+                raise_error.execute(
+                    'COMPLEXITY_BUDGET_EXHAUSTED', 
+                    str(response),
+                    complexity_limit_error.get('extensions', {}).get('retry_in_seconds', 60))
+            
+            # Raise a general Monday.com API error.
+            raise_error.execute('MONDAY_API_ERROR', f'A Monday.com API error occurred: {str(response)}')
         
         # Return the start node of the response data.
         data = response.get('data', {})
