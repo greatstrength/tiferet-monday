@@ -5,4 +5,11 @@ errors:
     error_code: ITEM_NOT_FOUND
     message:
     - lang: en_US
-      text: Item with ID {} not found.
+      text: 'Item with ID {} not found.'
+  monday_api_error:
+    name: Monday API Error
+    description: An error occurred while communicating with the Monday.com API.
+    error_code: MONDAY_API_ERROR
+    message:
+    - lang: en_US
+      text: 'A Monday.com API error occurred: {}'
