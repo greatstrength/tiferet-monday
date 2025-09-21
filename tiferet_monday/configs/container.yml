@@ -1,30 +1,66 @@
 attrs:
   board_add_column_cmd:
-    module_path: app.commands.board
+    module_path: tiferet_monday.commands.board
     class_name: AddColumn
-  board_list_columns_cmd:
-    module_path: app.commands.board
-    class_name: ListColumns
+  board_query_columns_cmd:
+    module_path: tiferet_monday.commands.board
+    class_name: QueryColumns
+  board_change_column_metadata_cmd:
+    module_path: tiferet_monday.commands.board
+    class_name: ChangeColumnMetadata
   board_delete_column_cmd:
-    module_path: app.commands.board
+    module_path: tiferet_monday.commands.board
     class_name: DeleteColumn
+  board_query_groups_cmd:
+    module_path: tiferet_monday.commands.board
+    class_name: QueryGroups
   board_create_item_cmd:
-    module_path: app.commands.board
+    module_path: tiferet_monday.commands.board
     class_name: CreateItem
+  doc_create_in_column_cmd:
+    module_path: tiferet_monday.commands.doc
+    class_name: CreateDocInColumn
+  doc_query_by_object_ids_cmd:
+    module_path: tiferet_monday.commands.doc
+    class_name: QueryDocsByObjectIds
+  doc_update_name_cmd:
+    module_path: tiferet_monday.commands.doc
+    class_name: UpdateDocName
+  doc_query_doc_blocks_cmd:
+    module_path: tiferet_monday.commands.doc
+    class_name: QueryDocBlocks
+  doc_create_doc_block_cmd:
+    module_path: tiferet_monday.commands.doc
+    class_name: CreateDocBlock
+  item_query_detail_by_id_cmd:
+    module_path: tiferet_monday.commands.item
+    class_name: QueryDetailById
+  item_query_by_ids_cmd:
+    module_path: tiferet_monday.commands.item
+    class_name: QueryByIds
+  item_query_column_values_cmd:
+    module_path: tiferet_monday.commands.item
+    class_name: QueryColumnValues
+  item_query_subitems_cmd:
+    module_path: tiferet_monday.commands.item
+    class_name: QuerySubitems
   item_update_simple_column_value_cmd:
-    module_path: app.commands.item
+    module_path: tiferet_monday.commands.item
     class_name: UpdateSimpleColumnValue
   item_create_subitem_cmd:
-    module_path: app.commands.item
+    module_path: tiferet_monday.commands.item
     class_name: CreateSubitem
   get_moncli_item_cmd:
-    module_path: app.commands.moncli
+    module_path: tiferet_monday.commands.moncli
     class_name: GetMoncliItem
   board_repo:
-    module_path: app.proxies.monday.board
+    module_path: tiferet_monday.proxies.monday.board
     class_name: BoardMondayProxy
+  document_repo:
+    module_path: tiferet_monday.proxies.monday.doc
+    class_name: DocumentMondayProxy
   item_repo:
-    module_path: app.proxies.monday.item
+    module_path: tiferet_monday.proxies.monday.item
     class_name: ItemMondayProxy
 
 const: 
