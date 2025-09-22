@@ -139,7 +139,7 @@ def add_citation_content(item_id: str, citation_type: str):
         )
     )
 
-    print('Enter in the citation content (end with a blank line):')
+    print('Enter in the citation content (end with a blank line):\n')
     lines = []
     while True:
         line = input()
