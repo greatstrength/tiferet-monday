@@ -175,7 +175,7 @@ def add_citation_content(item_id: str, citation_type: str):
             value=source
         ))
 
-    print('Citation content added to document.')
+    print('Citation content added to document\n')
     app.run(
         'item.update_simple_column_value',
         data=dict(
