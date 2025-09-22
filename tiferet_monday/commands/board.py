@@ -10,6 +10,9 @@ from tiferet.commands import Command
 # ** app
 from ..contracts.board import BoardRepository
 from ..models.board import *
+from ..models.item import (
+    Item,
+)
 
 # *** commands
 
@@ -215,6 +218,40 @@ class QueryGroups(Command):
         :rtype: List[Group]
         """
         return self.board_repo.query_groups(board_id=board_id)
+    
+# ** command: query_items_page
+class QueryItemsPage(Command):
+    """
+    Command to query a paginated list of items in a specified board.
+    """
+
+    # * attribute: board_repo
+    board_repo: BoardRepository
+
+    def __init__(self, board_repo: BoardRepository):
+        """
+        Initializes the QueryItemsPage command with the board repository.
+
+        :param board_repo: The repository for managing board operations.
+        :type board_repo: BoardRepository
+        """
+        self.board_repo = board_repo
+
+    # * method: execute
+    def execute(self, board_id: str | int, limit: int = 25, **kwargs) -> List[Item]:
+        """
+        Queries a paginated list of items in the specified board.
+
+        :param board_id: ID of the board from which to query items.
+        :type board_id: str | int
+        :param limit: Number of items to retrieve per page (default is 25).
+        :type limit: int
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: dict
+        :return: List of items in the specified board.
+        :rtype: List[Item]
+        """
+        return self.board_repo.query_items_page(board_id=board_id, limit=limit)
     
 # ** command: create_item
 class CreateItem(Command):
