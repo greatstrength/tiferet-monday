@@ -9,11 +9,16 @@ from moncli import ColumnType
 
 # ** app
 from ...data.board import *
+from ...data.item import (
+    ItemData,
+)
 from ...contracts.board import (
     BoardRepository,
     ColumnContract,
     GroupContract,
-    
+)
+from ...contracts.item import (
+    ItemContract,
 )
 from .settings import monday_client, MondayApiProxy
 
@@ -194,6 +199,53 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
             GroupData, 
             **group
         ).map() for group in data]
+    
+    # * method: query_items_page
+    def query_items_page(self, board_id: str | int, limit: int = 25) -> List[ItemContract]:
+        """
+        Queries a page of items from the specified board using the Moncli client.
+
+        :param board_id: ID of the board from which to query items.
+        :type board_id: str | int
+        :param limit: Maximum number of items to retrieve in the page.
+        :type limit: int
+        :return: List of items in the specified board.
+        :rtype: List[ItemContract]
+        """
+        
+        # Execute the query to retrieve items.
+        data = self.execute_query(
+            query="""
+                query ($boardId: [ID!], $limit: Int!) {
+                    boards (ids: $boardId) {
+                        items_page (limit: $limit) {
+                            cursor,
+                            items {
+                                id
+                                name
+                                group {
+                                    id
+                                },
+                                board {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            """,
+            variables={
+                'boardId': int(board_id),
+                'limit': limit
+            },
+            start_node=lambda data: data.get('boards', [])[0].get('items_page', []).get('items', [])
+        )
+
+        # Map the retrieved data to ItemContract objects.
+        return [DataObject.from_data(
+            ItemData, 
+            **item
+        ).map() for item in data]
     
     # * method: delete_column
     def delete_column(self, board_id: str | int, column_id: str):
