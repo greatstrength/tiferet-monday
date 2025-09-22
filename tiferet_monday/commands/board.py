@@ -1,7 +1,7 @@
 # *** imports
 
 # ** core
-from typing import List
+from typing import List, Dict, Any
 import json
 
 # ** infra
@@ -273,7 +273,13 @@ class CreateItem(Command):
         self.board_repo = board_repo
 
     # * method: execute
-    def execute(self, board_id: str | int, item_name: str, group_id: str = None, **kwargs):
+    def execute(self, 
+            board_id: str | int,
+            item_name: str,
+            group_id: str = None,
+            column_values: Dict[str, Any] = {},
+            create_labels_if_missing: bool = False,
+            **kwargs):
         """
         Creates a new item in the specified board.
 
@@ -283,11 +289,17 @@ class CreateItem(Command):
         :type item_name: str
         :param group_id: Optional ID of the group where the item will be created.
         :type group_id: str | None
+        :param column_values: Optional dictionary of column values to set for the new item.
+        :type column_values: Dict[str, Any]
+        :param create_labels_if_missing: Whether to create labels if they are missing (default is False).
+        :type create_labels_if_missing: bool
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict
         """
         return self.board_repo.create_item(
             board_id=board_id, 
             item_name=item_name,
-            group_id=group_id
+            group_id=group_id,
+            column_values=column_values,
+            create_labels_if_missing=create_labels_if_missing
         )

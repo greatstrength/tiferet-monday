@@ -2,6 +2,7 @@
 
 # ** core
 from typing import List, Dict, Any
+import json
 
 # ** infra
 from moncli import api_v2 as api
@@ -273,7 +274,13 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
         )
 
     # * method: create_item
-    def create_item(self, board_id: str | int, item_name: str, group_id: str = None) -> Any:
+    def create_item(self,
+            board_id: str | int,
+            item_name: str,
+            group_id: str = None,
+            column_values: Dict[str, Any] = {},
+            create_labels_if_missing: bool = False
+        ) -> ItemContract:
         """
         Creates a new item in the specified board using the Moncli client.
 
@@ -283,24 +290,41 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
         :type item_name: str
         :param group_id: Optional ID of the group under which the item will be created.
         :type group_id: str
-        :return: Result of the item creation operation.
-        :rtype: Any
+        :param column_values: Optional dictionary of column values to set for the new item.
+        :type column_values: Dict[str, Any]
+        :param create_labels_if_missing: Whether to create labels if they are missing (default is False).
+        :type create_labels_if_missing: bool
+        :return: The created item.
+        :rtype: ItemContract
         """
 
         # Execute the create item method from the client.
-        return monday_client.execute_query(
-            api_key=self.api_key,
+        data = self.execute_query(
             query="""
-                mutation ($boardId: ID!, $itemName: String!, $groupId: String) {
-                    create_item (board_id: $boardId, item_name: $itemName, group_id: $groupId) {
+                mutation ($boardId: ID!, $itemName: String!, $groupId: String, $column_values: JSON, $create_labels_if_missing: Boolean) {
+                    create_item (board_id: $boardId, item_name: $itemName, group_id: $groupId, column_values: $column_values, create_labels_if_missing: $create_labels_if_missing) {
                         id
                         name
+                        group {
+                            id
+                        },
+                        board {
+                            id
+                        }
                     }
                 }
             """,
             variables=dict(
                 boardId=int(board_id),
                 itemName=item_name,
-                groupId=group_id
-            )
+                groupId=group_id,
+                column_values=json.dumps(column_values) if column_values else None,
+                create_labels_if_missing=create_labels_if_missing
+            ),
+            start_node=lambda data: data.get('create_item', {})
         )
+
+        return DataObject.from_data(
+            ItemData,
+            **data
+        ).map()

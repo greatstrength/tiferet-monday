@@ -1,7 +1,7 @@
 # *** imports
 
 # ** core
-from typing import List, Any
+from typing import List, Dict, Any
 
 # ** infra
 from tiferet.contracts import *
@@ -144,7 +144,13 @@ class BoardRepository(Repository):
 
     # * method: create_item
     @abstractmethod
-    def create_item(self, board_id: str | int, item_name: str, group_id: str = None) -> Any:
+    def create_item(self,
+        board_id: str | int,
+        item_name: str,
+        group_id: str = None,
+        column_values: Dict[str, Any] = {},
+        create_labels_if_missing: bool = False
+    ) -> ItemContract:
         """
         Creates a new item in the specified board.
 
@@ -154,7 +160,11 @@ class BoardRepository(Repository):
         :type item_name: str
         :param group_id: Optional ID of the group under which the item will be created.
         :type group_id: str
-        :return: Result of the item creation operation.
-        :rtype: Any
+        :param column_values: Optional dictionary of column values to set for the new item.
+        :type column_values: Dict[str, Any]
+        :param create_labels_if_missing: Whether to create labels if they are missing (default is False).
+        :type create_labels_if_missing: bool
+        :return: The created item.
+        :rtype: ItemContract
         """
         raise NotImplementedError('The create_item method must be implemented by the board repository.')
