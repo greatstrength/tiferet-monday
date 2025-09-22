@@ -3,7 +3,13 @@ import json
 from monday_app import app
 
 
-def create_item(board_id: str, item_name: str, group_id: str = None, column_values: Dict[str, Any] = {}):
+def create_item(
+        board_id: str,
+        item_name: str,
+        group_id: str = None,
+        column_values: Dict[str, Any] = {},
+        create_labels_if_missing: bool = False
+    ):
     """
     Create a new item on the specified board.
 
@@ -15,6 +21,8 @@ def create_item(board_id: str, item_name: str, group_id: str = None, column_valu
     :type group_id: str
     :param column_values: A dictionary of column values to set for the new item.
     :type column_values: Dict[str, Any]
+    :param create_labels_if_missing: Whether to create labels if they are missing (default is False).
+    :type create_labels_if_missing: bool
     :return: The created ItemDetail object.
     :rtype: ItemDetail
     """
@@ -23,7 +31,8 @@ def create_item(board_id: str, item_name: str, group_id: str = None, column_valu
         board_id=board_id,
         item_name=item_name,
         group_id=group_id,
-        column_values=json.dumps(column_values) if column_values else None
+        column_values=column_values,
+        create_labels_if_missing=create_labels_if_missing
     )
 
     return app.run('board.create_item', data=data)
@@ -50,3 +59,20 @@ def update_simple_column_value(item_id: str, column_id: str, value: str):
     )
 
     app.run('item.update_simple_column_value', data=data)
+
+
+def query_columns(board_id: str):
+    """
+    Query the columns of the specified board.
+
+    :param board_id: The ID of the board whose columns are to be queried.
+    :type board_id: str
+    :return: List of columns in the specified board.
+    :rtype: List[Column]
+    """
+
+    data = dict(
+        board_id=board_id
+    )
+
+    return app.run('board.query_columns', data=data)
