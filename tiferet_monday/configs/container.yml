@@ -14,6 +14,9 @@ attrs:
   board_query_groups_cmd:
     module_path: tiferet_monday.commands.board
     class_name: QueryGroups
+  board_query_items_page_cmd:
+    module_path: tiferet_monday.commands.board
+    class_name: QueryItemsPage
   board_create_item_cmd:
     module_path: tiferet_monday.commands.board
     class_name: CreateItem

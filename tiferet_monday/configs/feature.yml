@@ -34,6 +34,13 @@ features:
     - attribute_id: board_query_groups_cmd
       name: Query Groups in Board
       description: Retrieves groups in the specified board.
+  board.query_items_page:
+    name: Query Items Page in Board
+    description: Retrieves a paginated list of items in the specified board.
+    commands:
+    - attribute_id: board_query_items_page_cmd
+      name: Query Items Page in Board
+      description: Retrieves a paginated list of items in the specified board.
   board.create_item:
     name: Create Item in Board
     description: Creates a new item in the specified board.
