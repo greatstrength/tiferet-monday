@@ -6,6 +6,11 @@ from typing import List, Any
 # ** infra
 from tiferet.contracts import *
 
+# ** app
+from .item import (
+    ItemContract,
+)
+
 # *** contracts
 
 # ** contract: column
@@ -122,6 +127,21 @@ class BoardRepository(Repository):
         """
         raise NotImplementedError('The query_groups method must be implemented by the board repository.')
     
+    # * method: query_items_page
+    @abstractmethod
+    def query_items_page(self, board_id: str | int, limit: int = 25) -> List[ItemContract]:
+        """
+        Queries a page of items from the specified board.
+
+        :param board_id: ID of the board from which to query items.
+        :type board_id: str | int
+        :param limit: Number of items to retrieve in the page.
+        :type limit: int
+        :return: List of items in the specified board.
+        :rtype: List[ItemContract]
+        """
+        raise NotImplementedError('The query_items_page method must be implemented by the board repository.')
+
     # * method: create_item
     @abstractmethod
     def create_item(self, board_id: str | int, item_name: str, group_id: str = None) -> Any:
