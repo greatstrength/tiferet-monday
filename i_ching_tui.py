@@ -189,7 +189,7 @@ def main():
     
     print('Welcome to the I Ching Citation Adder powered by Tiferet!')
     print('This tool will help you add citation items to your Monday.com board.')
-    print('-----------------------------------------------')
+    print('-----------------------------------------------\n')
 
     hex_no = None
     selected_work = None
@@ -212,6 +212,7 @@ def main():
             else:
                 print('Invalid input. Please enter y or n.')
                 continue
+            print('')
 
         # Get topic label.
         topic_label = to_hexagram_topic_label(hex_no)
@@ -222,9 +223,10 @@ def main():
             choice = input('> ').strip().lower()
             if choice == 'y':
                 pass
-        else:
-            works = list_works_cited()
-            selected_work = works_cited_selection_menu(works)
+            else:
+                works = list_works_cited()
+                selected_work = works_cited_selection_menu(works)
+        print('')
 
         if not selected_work:
             return
