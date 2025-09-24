@@ -84,7 +84,7 @@ def remove_dev_branch(task: ItemDetail, back: Callable = lambda d: d):
 
     print('Local branch deleted and switched back to main branch.')
 
-    back(task)
+    back()
 
 # * function: select_subtask_from_list
 def select_subtask_from_list(subtasks: List[Item], back: Callable = lambda d: d):
@@ -235,7 +235,7 @@ def work_dev_branch(task: ItemDetail, back: Callable = lambda d: d):
     while True:
 
         # Let the user select a subtask to work on.
-        subtask = select_subtask_from_list(subtasks, back=lambda: sprint_task_management_menu(task, back=back))
+        subtask = select_subtask_from_list(subtasks, back=lambda: sprint_task_management_menu(task, get_status_text(task), back=back))
 
         # Retrieve the latest details of the selected subtask.
         subtask = retrieve_task_details(subtask.id)
@@ -265,45 +265,49 @@ def work_dev_branch(task: ItemDetail, back: Callable = lambda d: d):
         print('Do you want to work on another subtask? (y/n): ')
         option = input('> ')
         print('')
+
+        # If the user does not want to work on another subtask, exit the loop.
         if option.lower() != 'y':
             break
+        
+    # Go back to the task management menu.
+    back()
 
 # * function: sprint_task_management_menu
-def sprint_task_management_menu(task: ItemDetail, back: Callable = lambda d: d):
+def sprint_task_management_menu(task: ItemDetail, task_status_text: str, back: Callable = lambda d: d):
     '''
     Display a menu for managing sprint tasks.
     '''
 
-    def create_menu_option():
+    if task_status_text not in ['Ready to start', 'In Progress', 'Waiting for review', 'Pending Deploy']:
+        print(f'Task status is "{task_status_text}". No actions available. Exiting...')
+        exit(0)
+
+    def create_menu_option(task_status_text):
         if task_status_text == 'Ready to start':
             return 'Start working on this task (create and push a new dev branch)'
         elif task_status_text == 'In Progress':
             return 'Continue working on this task (checkout existing dev branch)'
+        elif task_status_text == 'Waiting for review':
+            input('Task is waiting for review. Please complete the review process before proceeding. Press Enter once the review is done to complete the task.')
+            return 'Code review accepted. Finish working on this task (delete local dev branch and switch back to main)'
         elif task_status_text == 'Pending Deploy':
             return 'Finish working on this task (delete local dev branch and switch back to main)'
         else:
             return None
         
-    def execute_task_option():
+    def execute_task_option(task_status_text):
         if task_status_text == 'Ready to start':
-            create_dev_branch(task, back=lambda: sprint_task_management_menu(task.id))
+            create_dev_branch(task, back=lambda: sprint_task_management_menu(task, 'In Progress', back=back))
+            task_status_text = 'In Progress'
         elif task_status_text == 'In Progress':
-            work_dev_branch(task, back=main)
-        elif task_status_text == 'Pending Deploy':
-            remove_dev_branch(task, back=sprint_task_management_menu)
-
-    
-    task_status_text = get_status_text(task)
-
-    if task_status_text not in ['Ready to start', 'In Progress', 'Awaiting Review', 'Pending Deploy']:
-        print(f'Task status is "{task_status_text}". No actions available. Exiting...')
-        exit(0)
-
-    
+            work_dev_branch(task, back=lambda: sprint_task_management_menu(task, 'Waiting for review', back=back))
+        elif task_status_text in ['Waiting for review', 'Pending Deploy']:
+            remove_dev_branch(task, back=main)
     
     print('Select an option:')
     
-    print(f'\t1. {create_menu_option()}')
+    print(f'\t1. {create_menu_option(task_status_text)}')
     print('\t2. Back to main menu')
     print('Enter 1 or 2 (or press Enter to exit): ')
     option = input('> ')
@@ -312,8 +316,8 @@ def sprint_task_management_menu(task: ItemDetail, back: Callable = lambda d: d):
         exit(0)
     elif option == '2':
         back()
-    elif option == '1' and create_menu_option() is not None:
-        execute_task_option()
+    elif option == '1':
+        execute_task_option(task_status_text)
     else:
         print('Invalid option. Exiting...')
         exit(0)
@@ -324,9 +328,10 @@ def main():
     # Get the task ID from user input and retrieve the task details.
     task_id = task_id_input()
     task = retrieve_task_details(task_id)
+    task_status_text = get_status_text(task)
     print(f'Current task: {task.name} (Status: {get_status_text(task)})')
 
-    sprint_task_management_menu(task, back=main)
+    sprint_task_management_menu(task, task_status_text, back=main)
     
 if __name__ == '__main__':
     main()

@@ -49,6 +49,9 @@ def commit_changes(commit_message: str):
 
     print(f'Committing changes with message: {commit_message}')
     subprocess.run(['git', 'commit', '-m', commit_message])
+    # Push the committed changes to the remote repository.
+    subprocess.run(['git', 'push'])
+
 
 def delete_local_branch(git_branch: str):
     '''
