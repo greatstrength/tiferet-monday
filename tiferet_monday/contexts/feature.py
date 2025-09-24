@@ -83,7 +83,7 @@ class MondayFeatureContext(FeatureContext):
         except TiferetError as e:
             if e.error_code == 'COMPLEXITY_BUDGET_EXHAUSTED':
                 self.handle_retry(
-                    *e.args,
+                    e.args[1],
                     handler=lambda: self.handle_command(
                         command=command,
                         request=request,
