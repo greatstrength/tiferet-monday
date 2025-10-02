@@ -76,3 +76,25 @@ def query_columns(board_id: str):
     )
 
     return app.run('board.query_columns', data=data)
+
+def query_items_page(board_id: str, limit: int = 25, page: int = 1):
+    """
+    Query a page of items from the specified board.
+
+    :param board_id: The ID of the board whose items are to be queried.
+    :type board_id: str
+    :param limit: The number of items to retrieve per page (default is 25).
+    :type limit: int
+    :param page: The page number to retrieve (default is 1).
+    :type page: int
+    :return: A page of items from the specified board.
+    :rtype: ItemPage
+    """
+
+    data = dict(
+        board_id=board_id,
+        limit=limit,
+        page=page
+    )
+
+    return app.run('board.query_items_page', data=data)

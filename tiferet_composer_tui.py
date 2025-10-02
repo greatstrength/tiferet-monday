@@ -182,7 +182,7 @@ def write_code_to_file(subtask: ItemDetail, branch: str, code):
     # Change to the project root and write the code to the file.
     os.chdir(PROJECT_ROOT)
     checkout_branch(branch)
-    file_path = os.path.join(PROJECT_ROOT, linked_item.name)
+    file_path = os.path.join(PROJECT_ROOT, linked_item.name).replace(' ', '')
     print(f'Writing code to file: {file_path}...')
     with open(file_path, 'w') as f:
         f.write(code)
