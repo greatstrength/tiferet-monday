@@ -39,7 +39,7 @@ def create_citation_record(state):
         create_labels_if_missing=True
     )
 
-def add_citation_content(state, content: str):
+def add_citation_content(state, content: str, source: str = None):
 
     print('Creating document for citation content...')
     doc = app.run(
@@ -75,8 +75,6 @@ def add_citation_content(state, content: str):
         )
     )
 
-    print('Please enter in citation source (or press Enter to skip):')
-    source = input('> ').strip()
     if source:
         app.run('item.update_simple_column_value', data=dict(
             item_id=state.citation_record.id,
@@ -129,10 +127,14 @@ def main():
         if not content:
             print('No content entered. Press Ctrl+C to exit or start over.\n')
             continue
+
+        print('Please enter in citation source (or press Enter to skip):')
+        source = input('> ').strip()
+        print('')
         
         create_citation_record(state)
 
-        add_citation_content(state, content)
+        add_citation_content(state, content, source if source else None)
 
         select_follow_up_menu(state)
 

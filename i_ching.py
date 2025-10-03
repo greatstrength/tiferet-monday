@@ -121,7 +121,7 @@ def select_follow_up_menu(state):
 
             # If a new hexagram is requested, set the hex_no to None.
             elif choice == 2:
-                state.hex_no
+                state.hex_no = None
                 break
 
             # If a new work is requested, set the selected_work to None.
