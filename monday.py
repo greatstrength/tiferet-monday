@@ -98,3 +98,34 @@ def query_items_page(board_id: str, limit: int = 25, page: int = 1):
     )
 
     return app.run('board.query_items_page', data=data)
+
+def create_doc_in_column(state):
+    """
+    Create a new document in the specified column of the given item.
+
+    :param item_id: The ID of the item where the document will be created.
+    :type item_id: str
+    :param column_id: The ID of the column where the document will be created.
+    :type column_id: str
+    :return: The created Document object.
+    :rtype: Document
+    """
+
+    doc = app.run(
+        'doc.create_doc_in_column',
+        data=dict(
+            column_id='doc_mktxy71m',
+            item_id=state.citation_record.id, 
+        )
+    )
+
+    if state.citation_type:
+        app.run(
+            'doc.update_doc_name',
+            data=dict(
+                doc_id=doc.id,
+                name=state.citation_type
+            )
+        )
+
+    return doc

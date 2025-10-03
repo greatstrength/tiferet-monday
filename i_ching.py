@@ -1,3 +1,5 @@
+from time import sleep
+
 CITATION_TYPES = [
     'Summary Terms',
     'Name',
@@ -19,7 +21,9 @@ CITATION_TYPES = [
     'Changing Line 5 - Translation',
     'Changing Line 5 - Interpretation',
     'Changing Line 6 - Translation',
-    'Changing Line 6 - Interpretation',  
+    'Changing Line 6 - Interpretation',
+    'All Changing Lines - Translation',
+    'All Changing Lines - Interpretation'
 ]
 
 def enter_hexagram_number(state):
@@ -101,19 +105,25 @@ def select_citation_type_menu(state):
             print('Invalid input. Please enter a valid number.')
 
 def select_follow_up_menu(state):
-    print('Select what you wish to do next:')
-    print('1. Add another citation for the same hexagram.')
-    print('2. Enter citations for a new hexagram number.')
-    print('3. Add citations for a different work.')
-    print('4. Quit the program.')
-
-    # Set the citation type to none regardless.
-    state.citation_type = None
-
+   
     while True:
-      
+
+        if state.is_processing:
+            print('Currently processing the previous citation. Please wait...')
+            sleep(5)
+            continue
+
+        print('Select what you wish to do next:')
+        print('1. Add another citation for the same hexagram.')
+        print('2. Enter citations for a new hexagram number.')
+        print('3. Add citations for a different work.')
+        print('4. Quit the program.')
+
         try:
             choice = int(input('> ').strip())
+
+            # Set the citation type to none regardless.
+            state.citation_type = None
 
             # If another citation is requested, keep hex_no and selected_work the same.
             if choice == 1:
