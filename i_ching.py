@@ -108,11 +108,25 @@ def select_follow_up_menu(state):
    
     while True:
 
+        print('Currently processing the previous citation. Please wait...')
+        sleep(5)
         if state.is_processing:
-            print('Currently processing the previous citation. Please wait...')
+            print('Still processing. Please wait...')
             sleep(5)
             continue
 
+        index = CITATION_TYPES.index(state.citation_type) + 1
+
+        if index < len(CITATION_TYPES):
+            print(f'Do you wish to add the next citation for: {CITATION_TYPES[index]}? (y/n)')
+            choice = input('> ').strip().lower()
+            print('')
+            if choice == 'y':
+                state.citation_type = CITATION_TYPES[index]
+                return
+            elif choice == 'n':
+                state.citation_type = None
+            
         print('Select what you wish to do next:')
         print('1. Add another citation for the same hexagram.')
         print('2. Enter citations for a new hexagram number.')
@@ -121,9 +135,6 @@ def select_follow_up_menu(state):
 
         try:
             choice = int(input('> ').strip())
-
-            # Set the citation type to none regardless.
-            state.citation_type = None
 
             # If another citation is requested, keep hex_no and selected_work the same.
             if choice == 1:
