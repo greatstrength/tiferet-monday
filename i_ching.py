@@ -1,7 +1,7 @@
 from time import sleep
 
 CITATION_TYPES = [
-    'Summary Terms',
+    'Summary/Key Terms',
     'Name',
     'Judgement - Translation',
     'Judgement - Interpretation',
@@ -106,12 +106,15 @@ def select_citation_type_menu(state):
 
 def select_follow_up_menu(state):
    
-    while True:
+    still_processing = False
 
-        print('Currently processing the previous citation. Please wait...')
-        sleep(5)
+    while True:
         if state.is_processing:
-            print('Still processing. Please wait...')
+            if not still_processing:
+                still_processing = True
+                print('Currently processing the previous citation. Please wait...')
+            else:
+                print('Still processing. Please wait...')
             sleep(5)
             continue
 
