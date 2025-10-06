@@ -1,13 +1,12 @@
 import os
-import json
 import threading
-from time import sleep
-
-from monday_app import app
+ 
 from monday import (
     create_item,
     query_items_page,
-    create_doc_in_column
+    create_doc_in_column,
+    add_content_to_doc,
+    update_simple_column_value
 )
 from i_ching import (
     enter_hexagram_number,
@@ -43,14 +42,16 @@ def create_citation_record(state, source: str = None):
     )
 
 def format_cache_filename(state):
-    return f'citation_{state.hex_no}_{state.citation_type.lower()}.txt'
+    citation_type_name = state.citation_type.lower().replace(' ', '_').replace('/', '_')
+    return f'citation_{state.hex_no}_{citation_type_name}.txt'
 
 def cache_citation_content(state, content: str, source: str = None):
     cache_dir = 'citation_cache'
     os.makedirs(cache_dir, exist_ok=True)
     cache_file = os.path.join(cache_dir, format_cache_filename(state))
     with open(cache_file, 'w') as f:
-        f.write(content)
+        for page in content:
+            f.write(page+' |\n')
         if source:
             f.write(f'\n\n{source}')
 
@@ -58,29 +59,12 @@ def add_citation_content(state, content: str):
 
     doc = create_doc_in_column(state)
 
-    doc_content = dict(
-        alignment='left',
-        direction='ltr',
-        deltaFormat= [
-            {'insert': content}
-        ]
-    )
-    app.run(
-        'doc.create_doc_block', 
-        data=dict(
-            doc_id=doc.id,
-            type='normal_text',
-            content=json.dumps(doc_content)
-        )
-    )
+    add_content_to_doc(doc.id, content)
 
-    app.run(
-        'item.update_simple_column_value',
-        data=dict(
-            item_id=state.citation_record.id,
-            column_id='status',
-            value='Entered'
-        )
+    update_simple_column_value(
+        item_id=state.citation_record.id,
+        column_id='status',
+        value='Entered'
     )
 
 def clear_citation_from_cache(state):
@@ -133,14 +117,10 @@ def main():
         if not state.citation_type:
             select_citation_type_menu(state)
         
-        content = enter_citation_content()
+        content, source = enter_citation_content()
         if not content:
             print('No content entered. Press Ctrl+C to exit or start over.\n')
             continue
-
-        print('Please enter in citation source (or press Enter to skip):')
-        source = input('> ').strip()
-        print('')
 
         # Set state to processing synchronously before starting thread
         state.is_processing = True

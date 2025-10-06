@@ -10,6 +10,8 @@ CITATION_TYPES = [
     'Sequence',
     'Definition',
     'Image - Translation',
+    'Image - Interpretation',
+    'Lines - General',
     'Changing Line 1 - Translation',
     'Changing Line 1 - Interpretation',
     'Changing Line 2 - Translation',
@@ -72,14 +74,33 @@ def select_work_to_cite(state):
 
 def enter_citation_content():
     print('Enter in the citation content (end with a blank line):\n')
+    pages = []
     lines = []
+    source = None
     while True:
         line = input()
 
         if line == '':
-            break
-        lines.append(line)
-    return '\n'.join(lines)
+            print('Is this a page break? Choose one of the following options:')
+            print('y - Add a page break and continue entering content')
+            print('n - Finish entering content')
+            print('Or enter a citation source (or press Enter to skip):')
+            choice = input('> ').strip().lower()
+            if choice == '+':
+                if lines:
+                    pages.append('\n'.join(lines))
+                    lines = []
+                    print('Page break added. Continue entering content or press Enter again to finish.\n')
+                else:
+                    print('No content to save for this page break.')
+            else:
+                if lines:
+                    pages.append('\n'.join(lines))
+                source = choice if choice else None
+                break
+        else:
+            lines.append(line)
+    return pages, source
 
 def select_citation_type_menu(state):
     print('Select a citation type from the list below by entering its number:')
@@ -112,7 +133,7 @@ def select_follow_up_menu(state):
         if state.is_processing:
             if not still_processing:
                 still_processing = True
-                print('Currently processing the previous citation. Please wait...')
+                print('Currently processing the citation. Please wait...')
             else:
                 print('Still processing. Please wait...')
             sleep(5)
@@ -121,13 +142,13 @@ def select_follow_up_menu(state):
         index = CITATION_TYPES.index(state.citation_type) + 1
 
         if index < len(CITATION_TYPES):
-            print(f'Do you wish to add the next citation for: {CITATION_TYPES[index]}? (y/n)')
+            print(f'Do you wish to add the next citation for: {CITATION_TYPES[index]}? (y/n or Enter to skip)')
             choice = input('> ').strip().lower()
             print('')
             if choice == 'y':
                 state.citation_type = CITATION_TYPES[index]
                 return
-            elif choice == 'n':
+            else:
                 state.citation_type = None
             
         print('Select what you wish to do next:')
@@ -143,9 +164,10 @@ def select_follow_up_menu(state):
             if choice == 1:
                 break
 
-            # If a new hexagram is requested, set the hex_no to None.
+            # If a new hexagram is requested, set the hex_no and citation_type to None.
             elif choice == 2:
                 state.hex_no = None
+                state.citation_type = None
                 break
 
             # If a new work is requested, set the selected_work to None.

@@ -129,3 +129,39 @@ def create_doc_in_column(state):
         )
 
     return doc
+
+def add_content_to_doc(doc_id: str, content: list[str]):
+    """
+    Add content to the specified document.
+
+    :param doc_id: The ID of the document where the content will be added.
+    :type doc_id: str
+    :param content: The content to be added to the document.
+    :type content: list[str]
+    :return: Result of the content addition operation.
+    :rtype: Dict[str, Any]
+    """
+
+    previous_block_id = None
+    
+    for block in content:
+        doc_content = dict(
+            alignment='left',
+            direction='ltr',
+            deltaFormat=[
+                {'insert': block}
+            ]
+        )
+
+        data = dict(
+            doc_id=doc_id,
+            type='normal_text',
+            content=json.dumps(doc_content)
+        )
+        if previous_block_id:
+            data['after_block_id'] = previous_block_id
+
+        previous_block_id = app.run(
+            'doc.create_doc_block', 
+            data=data
+        )
