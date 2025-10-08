@@ -86,7 +86,7 @@ def enter_citation_content():
             print('n - Finish entering content')
             print('Or enter a citation source (or press Enter to skip):')
             choice = input('> ').strip().lower()
-            if choice == '+':
+            if choice == 'y':
                 if lines:
                     pages.append('\n'.join(lines))
                     lines = []
@@ -167,11 +167,11 @@ def select_follow_up_menu(state):
             # If a new hexagram is requested, set the hex_no and citation_type to None.
             elif choice == 2:
                 state.hex_no = None
-                state.citation_type = None
                 break
 
             # If a new work is requested, set the selected_work to None.
             elif choice == 3:
+                state.hex_no = None
                 state.selected_work = None
                 break
 
