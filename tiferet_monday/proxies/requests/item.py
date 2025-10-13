@@ -283,14 +283,29 @@ class ItemMondayProxy(ItemRepository, MondayApiProxy):
         :type value: str
         """
 
-        # Import and moncli api_v2 handlers.
-        return api.change_simple_column_value(
-            api_key=self.api_key,
-            item_id=item_id,
-            board_id=board_id,
-            column_id=column_id,
-            value=value
+        # Execute the mutation to update the simple column value.
+        data = self.execute_query(
+            query="""
+                mutation ($item_id: ID!, $board_id: ID!, $column_id: String!, $value: String!) {
+                    change_simple_column_value(item_id: $item_id, board_id: $board_id, column_id: $column_id, value: $value) {
+                        id
+                    }
+                }
+            """,
+            variables={
+                'item_id': int(item_id),
+                'board_id': int(board_id),
+                'column_id': column_id,
+                'value': value
+            },
+            start_node=lambda data: data.get('change_simple_column_value', None)
         )
+
+        # Map the result to ItemData and return.
+        return DataObject.from_data(
+            ItemData,
+            **data
+        ).map() if data else None
     
     # * method: create_subitem
     def create_subitem(self, parent_item_id: str | int, item_name: str, column_values: Dict[str, Any] = {}) -> ItemContract:

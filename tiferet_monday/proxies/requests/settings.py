@@ -5,17 +5,14 @@ from typing import Dict, Any
 
 # ** infra
 from tiferet.commands import raise_error
-
-# ** app
-from ...commands import *
-from ...clients import monday_client
+import requests
 
 # *** constants
 
 # *** classes
 
-# ** class monday_api_proxy
-class MondayApiProxy(object):
+# ** class monday_api_requests_proxy
+class MondayApiRequestsProxy(object):
     """
     Proxy class for interacting with the Monday.com API.
     """
@@ -35,10 +32,12 @@ class MondayApiProxy(object):
         self.api_key = monday_api_key
 
     # * method: execute_query
-    def execute_query(self, query: str, variables: Dict[str, Any] = {}, api_version: str = None, timeout: int = None, start_node = lambda data: data) -> Dict[str, Any]:
+    def execute_query(self, api_key: str, query: str, variables: Dict[str, Any] = {}, api_version: str = None, timeout: int = None, handle_response = lambda data: data) -> Dict[str, Any]:
         """
         Executes a GraphQL query against the Monday.com API.
 
+        :param api_key: The API key for accessing the Monday.com API.
+        :type api_key: str
         :param query: The GraphQL query string.
         :type query: str
         :param variables: Variables to be used in the query.
@@ -47,23 +46,30 @@ class MondayApiProxy(object):
         :type api_version: str
         :param timeout: Optional timeout for the request.
         :type timeout: int
-        :param start_node: Optional function to process the start node of the response.
-        :type start_node: function
+        :param handle_response: Optional function to process the response data.
+        :type handle_response: function
         :return: The response data from the API.
         :rtype: Dict[str, Any]
         """
-        # Call the monday client to execute the query.
-        return monday_client.execute_query(
-            api_key=self.api_key,
-            query=query,
-            variables=variables,
-            api_version=api_version,
-            timeout=timeout,
-            handle_response=lambda data: self.handle_response(
-                data,
-                start_node=start_node
-            )
+        
+        headers = {
+            'Authorization': api_key,
+            'Content-Type': 'application/json'
+        }
+
+        # Add the API version to the headers if provided.
+        if api_version:
+            headers['API-Version'] = api_version
+
+        
+        response = requests.post(
+            url='https://api.monday.com/v2',
+            json={'query': query, 'variables': variables},
+            headers=headers,
+            timeout=timeout
         )
+        
+        return self.handle_response(response.json())
     
     # * method: handle_response
     def handle_response(self, response: Dict[str, Any], start_node: lambda data: data) -> Any:
