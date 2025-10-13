@@ -190,8 +190,10 @@ class UpdateSimpleColumnValue(Command):
         """
         Executes the command to update the value of a simple column for the specified item.
 
-        :param item: The item for which the column value will be updated.
-        :type item: Item
+        :param board_id: The ID of the board to which the item belongs.
+        :type board_id: str
+        :param item_id: The ID of the item to be updated.
+        :type item_id: str
         :param column_id: ID of the column to be updated.
         :type column_id: str
         :param value: New value for the column.

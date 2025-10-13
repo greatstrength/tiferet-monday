@@ -289,6 +289,10 @@ class ItemMondayProxy(ItemRepository, MondayApiRequestsProxy):
                 mutation ($item_id: ID!, $board_id: ID!, $column_id: String!, $value: String!) {
                     change_simple_column_value(item_id: $item_id, board_id: $board_id, column_id: $column_id, value: $value) {
                         id
+                        name
+                        board {
+                            id
+                        }
                     }
                 }
             """,
