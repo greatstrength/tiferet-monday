@@ -1,7 +1,10 @@
 # *** imports
 
 # ** core
-from typing import Any, Callable
+from typing import (
+    Any, 
+    Callable
+)
 from time import sleep
 
 # ** infra
@@ -9,8 +12,10 @@ from tiferet import (
     Command,
     TiferetError
 )
-from tiferet.contexts.request import RequestContext
-from tiferet.contexts.feature import FeatureContext
+from tiferet.contexts import (
+    RequestContext,
+    FeatureContext
+)
 
 # *** contexts
 
