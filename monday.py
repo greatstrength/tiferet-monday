@@ -38,10 +38,12 @@ def create_item(
     return app.run('board.create_item', data=data)
 
 
-def update_simple_column_value(item_id: str, column_id: str, value: str):
+def update_simple_column_value(board_id: str, item_id: str, column_id: str, value: str):
     """
     Update the value of a simple column for the specified item.
     
+    :param board_id: The ID of the board to which the item belongs.
+    :type board_id: str
     :param item_id: The ID of the item to be updated.
     :type item_id: str
     :param column_id: The ID of the column to be updated.
@@ -53,6 +55,7 @@ def update_simple_column_value(item_id: str, column_id: str, value: str):
     """
 
     data = dict(
+        board_id=board_id,
         item_id=item_id,
         column_id=column_id,
         value=value

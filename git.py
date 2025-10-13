@@ -1,8 +1,7 @@
 import subprocess
 
-GITHUB_BASE_BRANCH = 'main'
 
-def pull_latest_from_base_branch(base_branch: str = GITHUB_BASE_BRANCH):
+def pull_latest_from_base_branch(base_branch: str):
     '''
     Pull the latest code from the base branch.
     '''

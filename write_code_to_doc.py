@@ -1,15 +1,11 @@
 import os, subprocess, json
 
 from monday_app import app
-from tiferet_monday.models.item import ItemDetail
+from monday import update_simple_column_value
 
-GITHUB_BRANCH = 'v1.0.0-proto'
-GITHUB_BEFORE_BRANCH = 'main'
-# TASK_ID = 10040173963
-SUBTASK_ID = 10015386326
-MODULE_ITEM_ID = 10015367194
-# SUBTASK_NAME = 'Contexts - Tests (Request) - Add Tests for Flask Request Context'
-INCLUDE_BEFORE = False
+GITHUB_BRANCH = 'v0.1-proto'
+GITHUB_BEFORE_BRANCH = 'master'
+
 
 def read_and_copy_code(doc_id: str, github_branch: str, module_path: str):
 
@@ -78,10 +74,6 @@ def read_and_copy_code(doc_id: str, github_branch: str, module_path: str):
 #         })
 #     )
 
-print('Retrieving subtask details...')
-subtask = app.run('item.query_detail_by_id', data=dict(
-    item_id=SUBTASK_ID
-))
 
 # if create_new:
 #     print('Adding column values to subtask...')
@@ -106,36 +98,79 @@ subtask = app.run('item.query_detail_by_id', data=dict(
 #         value=SUBTASK_TYPE)
 #     )
 
-print('Retrieving code module...')
-module = app.run('item.query_detail_by_id', data=dict(
-    item_id=MODULE_ITEM_ID
-))
+include_before = False
 
-print('Creating new/after code doc...')
-new_after_code = subtask.get_column_value('Code (New/After)')
-doc = app.run('doc.create_doc_in_column', data=dict(
-    item_id=subtask.id,
-    column_id=new_after_code.id,
-))
+while True:
 
-print('Reading and copying code (new/after)...')
-read_and_copy_code(
-    doc_id=doc.get('id'),
-    github_branch=GITHUB_BRANCH,
-    module_path=module.name
-)
+    print('Enter the ID for the subtask:')
+    subtask_id_input = input('> ').strip()
+    try:
+        subtask_id = int(subtask_id_input)
+    except:
+        print('Invalid input. Please enter a numeric ID.')
+        continue
 
-if INCLUDE_BEFORE:
-    print('Creating before code doc...')
-    before_code = subtask.get_column_value('Code (Before)')
-    doc = app.run('doc.create_doc_in_column', data=dict(
-        item_id=subtask.id,
-        column_id=before_code.id,
+    print('Enter the ID for the module item:')
+    module_item_id_input = input('> ').strip()
+    try:
+        module_item_id = int(module_item_id_input)
+    except:
+        print('Invalid input. Please enter a numeric ID.')
+        continue
+    
+    print('Include "before" code? (y/n):')
+    include_before_input = input('> ').strip().lower()
+    if include_before_input in ['y', 'yes']:
+        include_before = True
+
+    print('Retrieving subtask details...')
+    subtask = app.run('item.query_detail_by_id', data=dict(
+        item_id=subtask_id
     ))
 
-    print('Reading and copying code (before)...')
+    print('Retrieving code module...')
+    module = app.run('item.query_detail_by_id', data=dict(
+        item_id=module_item_id
+    ))
+
+    print('Creating new/after code doc...')
+    new_after_code = subtask.get_column_value('Code (New/After)')
+    doc = app.run('doc.create_doc_in_column', data=dict(
+        item_id=subtask.id,
+        column_id=new_after_code.id,
+    ))
+
+    print('Reading and copying code (new/after)...')
     read_and_copy_code(
         doc_id=doc.get('id'),
-        github_branch=GITHUB_BEFORE_BRANCH,
+        github_branch=GITHUB_BRANCH,
         module_path=module.name
     )
+
+    if include_before:
+        print('Creating before code doc...')
+        before_code = subtask.get_column_value('Code (Before)')
+        doc = app.run('doc.create_doc_in_column', data=dict(
+            item_id=subtask.id,
+            column_id=before_code.id,
+        ))
+
+        print('Reading and copying code (before)...')
+        read_and_copy_code(
+            doc_id=doc.get('id'),
+            github_branch=GITHUB_BEFORE_BRANCH,
+            module_path=module.name
+        )
+
+    update_simple_column_value(
+        board_id=subtask.board_id,
+        item_id=subtask.id,
+        column_id=new_after_code.id,
+        value='Ready to start'
+    )
+
+    print('Process completed successfully.')
+    print('Process another subtask? (y/n):')
+    another_input = input('> ').strip().lower()
+    if another_input not in ['y', 'yes']:
+        break

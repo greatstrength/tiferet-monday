@@ -24,7 +24,7 @@ from task import (
 
 ROOT_PATH = os.getcwd()
 PROJECT_ROOT = os.getenv('TIFERET_APP_PROJECT_ROOT')
-GITHUB_BASE_BRANCH = 'main'
+GITHUB_BASE_BRANCH = 'v0.1.0-release'
 TASK_OWNER_ID = '39073543'
 
 
@@ -40,7 +40,7 @@ def create_dev_branch(task: ItemDetail, back: Callable = lambda d: d):
     os.chdir(project_root)
 
     # Pull the latest from the base branch.
-    pull_latest_from_base_branch()
+    pull_latest_from_base_branch(GITHUB_BASE_BRANCH)
 
     # Generate the git branch name.
     git_branch = get_branch_name(task)

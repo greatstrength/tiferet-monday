@@ -62,6 +62,7 @@ def add_citation_content(state, content: str):
     add_content_to_doc(doc.id, content)
 
     update_simple_column_value(
+        board_id=BOARD_ID,
         item_id=state.citation_record.id,
         column_id='status',
         value='Entered'
