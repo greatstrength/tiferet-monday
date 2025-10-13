@@ -1,3 +1,5 @@
+"""Tiferet Monday Models Exports"""
+
 # *** exports
 
 # ** app
