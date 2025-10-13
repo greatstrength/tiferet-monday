@@ -4,7 +4,11 @@
 from typing import List
 
 # ** infra
-from tiferet.contracts import *
+from tiferet.contracts import (
+    ModelContract,
+    Repository,
+    abstractmethod
+)
 
 # *** contracts
 

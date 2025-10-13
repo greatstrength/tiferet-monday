@@ -4,7 +4,11 @@
 from typing import List, Dict, Any
 
 # ** infra
-from tiferet.contracts import *
+from tiferet.contracts import (
+    ModelContract,
+    Repository,
+    abstractmethod
+)
 
 # ** app
 from .doc import DocumentBlockContract
