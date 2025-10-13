@@ -3,12 +3,12 @@
 # ** app
 from ...contracts.doc import *
 from ...data.doc import *
-from . import MondayApiProxy
+from .settings import MondayApiRequestsProxy
 
 # *** proxies
 
 # ** proxy: document_monday_proxy
-class DocumentMondayProxy(MondayApiProxy, DocumentRepository):
+class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
     """
     Proxy for managing document-related operations using the Monday.com API.
     """

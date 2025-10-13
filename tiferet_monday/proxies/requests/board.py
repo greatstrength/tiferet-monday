@@ -5,28 +5,28 @@ from typing import List, Dict, Any
 import json
 
 # ** infra
-from moncli import api_v2 as api
-from moncli import ColumnType
+from tiferet import DataObject
 
 # ** app
-from ...data.board import *
+from ...data.board import (
+    ColumnData,
+    GroupData,
+)
 from ...data.item import (
-    ItemData,
+    ItemData
 )
 from ...contracts.board import (
-    BoardRepository,
+    ItemContract,
     ColumnContract,
     GroupContract,
+    BoardRepository,
 )
-from ...contracts.item import (
-    ItemContract,
-)
-from .settings import monday_client, MondayApiProxy
+from .settings import MondayApiRequestsProxy
 
 # *** proxies
 
 # ** proxy: board_moncli_proxy
-class BoardMondayProxy(BoardRepository, MondayApiProxy):
+class BoardMondayProxy(BoardRepository, MondayApiRequestsProxy):
     """
     Proxy for managing board-related operations using the Moncli client.
     """
@@ -78,15 +78,15 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
                 )
             )
 
-        # Execute the add column method from the client.
-        api.create_column(
-            api_key=self.api_key,
-            board_id=board_id,
-            title=title,
-            column_type=ColumnType[column_type],
-            defaults=defaults,
-            description=description
-        )
+        # # Execute the add column method from the client.
+        # api.create_column(
+        #     api_key=self.api_key,
+        #     board_id=board_id,
+        #     title=title,
+        #     column_type=ColumnType[column_type],
+        #     defaults=defaults,
+        #     description=description
+        # )
 
     # * method: query_columns
     def query_columns(self, board_id: str | int) -> List[ColumnContract]:
@@ -259,19 +259,20 @@ class BoardMondayProxy(BoardRepository, MondayApiProxy):
         :type column_id: str
         """
         
-        api.requests.execute_query(
-            api_key=self.api_key,
-            query=f"""mutation ($boardId: ID!, $columnId: String!) {{
-                delete_column (board_id: $boardId, column_id: $columnId) {{
-                    id
-                }}
-            }}""",
-            variables={
-                'boardId': int(board_id),
-                'columnId': column_id
-            },
-            query_name='delete_column',
-        )
+        # api.requests.execute_query(
+        #     api_key=self.api_key,
+        #     query=f"""mutation ($boardId: ID!, $columnId: String!) {{
+        #         delete_column (board_id: $boardId, column_id: $columnId) {{
+        #             id
+        #         }}
+        #     }}""",
+        #     variables={
+        #         'boardId': int(board_id),
+        #         'columnId': column_id
+        #     },
+        #     query_name='delete_column',
+        # )
+        pass
 
     # * method: create_item
     def create_item(self,

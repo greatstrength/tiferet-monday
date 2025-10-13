@@ -32,7 +32,7 @@ class MondayApiRequestsProxy(object):
         self.api_key = monday_api_key
 
     # * method: execute_query
-    def execute_query(self, api_key: str, query: str, variables: Dict[str, Any] = {}, api_version: str = None, timeout: int = None, handle_response = lambda data: data) -> Dict[str, Any]:
+    def execute_query(self, query: str, variables: Dict[str, Any] = {}, api_version: str = None, timeout: int = None, start_node = lambda data: data) -> Dict[str, Any]:
         """
         Executes a GraphQL query against the Monday.com API.
 
@@ -53,7 +53,7 @@ class MondayApiRequestsProxy(object):
         """
         
         headers = {
-            'Authorization': api_key,
+            'Authorization': self.api_key,
             'Content-Type': 'application/json'
         }
 
@@ -69,7 +69,10 @@ class MondayApiRequestsProxy(object):
             timeout=timeout
         )
         
-        return self.handle_response(response.json())
+        return self.handle_response(
+            response.json(),
+            start_node=start_node
+        )
     
     # * method: handle_response
     def handle_response(self, response: Dict[str, Any], start_node: lambda data: data) -> Any:

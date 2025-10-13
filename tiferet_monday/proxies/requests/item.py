@@ -9,12 +9,12 @@ from moncli import api_v2 as api
 # ** app
 from ...data.item import *
 from ...contracts.item import *
-from .settings import MondayApiProxy
+from .settings import MondayApiRequestsProxy
 
 # *** proxies
 
 # ** proxy: item_moncli_proxy
-class ItemMondayProxy(ItemRepository, MondayApiProxy):
+class ItemMondayProxy(ItemRepository, MondayApiRequestsProxy):
     """
     Proxy for managing item-related operations using the Moncli client.
     """
