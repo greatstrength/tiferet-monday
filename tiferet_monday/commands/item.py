@@ -1,14 +1,23 @@
 # *** imports
 
 # ** core
-from typing import List, Dict, Any
+from typing import (
+    List,
+    Dict,
+    Any,
+    Tuple
+)
 
 # ** infra
-from tiferet.commands import Command
+from tiferet import Command
 
 # ** app
-from ..contracts.item import *
-from ..models.item import *
+from tiferet_monday.contracts import (
+    ItemContract,
+    ItemDetailContract,
+    ColumnValueContract,
+    ItemRepository
+)
 
 # *** commands
 
@@ -67,7 +76,7 @@ class QueryByIds(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, item_ids: List[str | int], **kwargs) -> List[Item]:
+    def execute(self, item_ids: List[str | int], **kwargs) -> List[ItemContract]:
         """
         Executes the command to query items by their IDs.
 
@@ -102,7 +111,7 @@ class QueryColumnValues(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, item_id: str | int, column_ids: List[str] = [], **kwargs) -> Tuple[ColumnValue]:
+    def execute(self, item_id: str | int, column_ids: List[str] = [], **kwargs) -> Tuple[ColumnValueContract]:
         """
         Executes the command to query column values of the specified item.
 
@@ -177,7 +186,7 @@ class UpdateSimpleColumnValue(Command):
         self.item_repo = item_repo
 
     # * method: execute
-    def execute(self, item: Item, column_id: str, value: str, **kwargs) -> Dict[str, Any]:
+    def execute(self, board_id: str, item_id: str, column_id: str, value: str, **kwargs) -> ItemContract:
         """
         Executes the command to update the value of a simple column for the specified item.
 
@@ -194,7 +203,12 @@ class UpdateSimpleColumnValue(Command):
         """
         
         # Call the repository method to update the column value.
-        return self.item_repo.update_simple_column_value(item_id=item.id, board_id=item.board.id, column_id=column_id, value=value)
+        return self.item_repo.update_simple_column_value(
+            item_id=item_id, 
+            board_id=board_id, 
+            column_id=column_id, 
+            value=value
+        )
     
 # ** command: create_subitem
 class CreateSubitem(Command):

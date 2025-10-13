@@ -1,11 +1,17 @@
 # *** imports
 
+# ** core
+from typing import List
+
 # ** infra
-from tiferet.commands import Command
+from tiferet import Command
 
 # ** app
-from ..models.doc import *
-from ..contracts.doc import *
+from ..contracts import (
+    DocumentContract,
+    DocumentBlockContract,
+    DocumentRepository
+)
 
 # *** commands
 
@@ -31,7 +37,7 @@ class CreateDocInColumn(Command):
         self.document_repo = document_repo
 
     # * method: execute
-    def execute(self, item_id: str | int, column_id: str, **kwargs) -> Document:
+    def execute(self, item_id: str | int, column_id: str, **kwargs) -> DocumentContract:
         """
         Executes the command to create a document in the specified column.
 
@@ -70,7 +76,7 @@ class QueryDocsByObjectIds(Command):
         self.document_repo = document_repo
 
     # * method: execute
-    def execute(self, object_ids: List[str], **kwargs) -> List[Document]:
+    def execute(self, object_ids: List[str], **kwargs) -> List[DocumentContract]:
         """
         Executes the command to query documents by their object IDs.
 
@@ -144,7 +150,7 @@ class QueryDocBlocks(Command):
         self.document_repo = document_repo
 
     # * method: execute
-    def execute(self, doc_id: str | int, limit: int = 25, page: int = 1, **kwargs) -> List[DocumentBlock]:
+    def execute(self, doc_id: str | int, limit: int = 25, page: int = 1, **kwargs) -> List[DocumentBlockContract]:
         """
         Executes the command to read blocks from a specified document.
 

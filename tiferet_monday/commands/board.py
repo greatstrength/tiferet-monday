@@ -1,17 +1,22 @@
 # *** imports
 
 # ** core
-from typing import List, Dict, Any
+from typing import (
+    List,
+    Dict,
+    Any
+)
 import json
 
 # ** infra
-from tiferet.commands import Command
+from tiferet import Command
 
 # ** app
-from ..contracts.board import BoardRepository
-from ..models.board import *
-from ..models.item import (
-    Item,
+from ..contracts import (
+    ColumnContract,
+    GroupContract,
+    ItemContract,
+    BoardRepository
 )
 
 # *** commands
@@ -89,7 +94,7 @@ class QueryColumns(Command):
         self.board_repo = board_repo
 
     # * method: execute
-    def execute(self, board_id: str | int, **kwargs) -> List[Column]:
+    def execute(self, board_id: str | int, **kwargs) -> List[ColumnContract]:
         """
         Lists all columns in the specified board.
 
@@ -206,7 +211,7 @@ class QueryGroups(Command):
         self.board_repo = board_repo
 
     # * method: execute
-    def execute(self, board_id: str | int, **kwargs) -> List[Group]:
+    def execute(self, board_id: str | int, **kwargs) -> List[GroupContract]:
         """
         Queries groups in the specified board.
 
@@ -238,7 +243,7 @@ class QueryItemsPage(Command):
         self.board_repo = board_repo
 
     # * method: execute
-    def execute(self, board_id: str | int, limit: int = 25, **kwargs) -> List[Item]:
+    def execute(self, board_id: str | int, limit: int = 25, **kwargs) -> List[ItemContract]:
         """
         Queries a paginated list of items in the specified board.
 
