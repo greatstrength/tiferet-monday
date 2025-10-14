@@ -124,6 +124,7 @@ class ItemRepository(Repository):
     def query_column_values(self, item_id: str | int, column_ids: List[str] = []) -> List[ColumnValueContract]:
         """
         Queries column values for a given item ID.
+
         :param item_id: ID of the item for which to query column values.
         :type item_id: str | int
         :param column_ids: Optional list of column IDs to filter the results.
@@ -148,5 +149,4 @@ class ItemRepository(Repository):
         :return: The created subitem.
         :rtype: ItemContract
         """
-
         raise NotImplementedError('The create_subitem method must be implemented by the item repository.')
