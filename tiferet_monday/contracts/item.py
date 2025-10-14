@@ -1,13 +1,19 @@
+"""Tiferet Monday Items Contracts"""
+
 # *** imports
 
 # ** core
-from typing import List, Dict, Any
+from abc import abstractmethod
+from typing import (
+    List,
+    Dict,
+    Any,
+)
 
 # ** infra
-from tiferet.contracts import (
+from tiferet import (
     ModelContract,
     Repository,
-    abstractmethod
 )
 
 # ** app
