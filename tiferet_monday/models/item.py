@@ -1,19 +1,30 @@
+"""Tiferet Monday Item Models"""
+
 # *** imports
 
 # ** core
-from typing import List, Dict, Any, Tuple
+from typing import (
+    List,
+    Dict,
+    Any,
+    Tuple
+)
 
 # ** infra
-from tiferet.models import *
+from tiferet import (
+    ModelObject,
+    StringType,
+    ListType,
+    ModelType,
+)
 
 # ** app
-from .doc import DocumentBlock
-from .column_value import *
+from .column_value import ColumnValue
 
 # *** models
 
 # * model: reply
-class Reply(Entity):
+class Reply(ModelObject):
     """
     Represents a reply in a Monday.com item.
     """
@@ -43,7 +54,7 @@ class Reply(Entity):
     )
 
 # ** model: update
-class Update(Entity):
+class Update(ModelObject):
     """
     Represents an update in a Monday.com item.
     """
@@ -90,7 +101,7 @@ class Update(Entity):
     )
 
 # ** model: item
-class Item(Entity):
+class Item(ModelObject):
     """
     Represents an item in the Monday.com system.
     """
@@ -128,29 +139,6 @@ class Item(Entity):
         )
     )
 
-# ** model: item_description
-class ItemDescription(Entity):
-    """
-    Represents the description of a Monday.com item.
-    """
-
-    # * attribute: 
-    id = StringType(
-        required=True,
-        metadata=dict(
-            description='The unique identifier of the item description document.'
-        )
-    )
-
-    # * attribute: blocks
-    blocks = ListType(
-        ModelType(DocumentBlock),
-        default=[],
-        metadata=dict(
-            description='A list of document blocks that make up the item description.'
-        )
-    )
-
 # ** model: item_detail
 class ItemDetail(Item):
     """
@@ -171,14 +159,6 @@ class ItemDetail(Item):
         )
     )
 
-    # * attribute: description
-    description = ModelType(
-        ItemDescription,
-        metadata=dict(
-            description='The description of the item.'
-        )
-    )
-
     # * attribute: column_values
     column_values = ListType(
         ModelType(ColumnValue),
@@ -196,7 +176,6 @@ class ItemDetail(Item):
         board_id: str, 
         group_id: str, 
         parent_item_id: str = None,
-        description: Dict[str, Any] = None,
         column_values: List[Dict[str, Any]] = [], 
         updates: List[Dict[str, Any]] = []
     ) -> 'ItemDetail':
@@ -213,8 +192,6 @@ class ItemDetail(Item):
         :type group_id: str
         :param parent_item_id: The unique identifier of the parent item (for subitems).
         :type parent_item_id: str
-        :param description: The description of the item as a dictionary.
-        :type description: Dict[str, Any]
         :param column_values: A list of column values as dictionaries.
         :type column_values: List[Dict[str, Any]]
         :param updates: A list of updates as dictionaries.
@@ -236,7 +213,6 @@ class ItemDetail(Item):
             board_id=board_id,
             group_id=group_id,
             parent_item_id=parent_item_id,
-            description=description,
             updates=updates,
             column_values=column_values,
         )
@@ -268,8 +244,8 @@ class ItemDetail(Item):
 
         :param column_ids_or_titles: A list of unique identifiers or titles of the columns.
         :type column_ids_or_titles: List[str]
-        :return: A list of ColumnValue objects matching the provided IDs.
-        :rtype: List[ColumnValue]
+        :return: A tuple of ColumnValue objects matching the provided IDs.
+        :rtype: Tuple[ColumnValue]
         """
         
         # Create map of column ids for quick lookup.
@@ -279,4 +255,5 @@ class ItemDetail(Item):
         column_value_map.update({cv.name: cv for cv in self.column_values}) 
 
         # Filter and return the column values that match the provided IDs in order.
-        return tuple([column_value_map[id_or_title] for id_or_title in column_ids_or_titles])
+        # Skip any IDs that are not found.
+        return tuple([column_value_map[id_or_title] for id_or_title in column_ids_or_titles if id_or_title in column_value_map])

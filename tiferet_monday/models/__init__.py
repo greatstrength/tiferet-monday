@@ -3,11 +3,18 @@
 # *** exports
 
 # ** app
+from .column_value import (
+    ColumnValue,
+    StatusValue,
+    PeopleValue,
+    NumbersValue,
+    BoardRelationValue,
+    FileValue,
+    DocValue,
+)
 from .item import (
     Item,
     ItemDetail,
-    ItemDescription,
     Update,
     Reply,
-    StatusValue
 )
