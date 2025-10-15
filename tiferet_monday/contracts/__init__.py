@@ -7,7 +7,6 @@ from .item import (
     ItemContract,
     ItemDetailContract,
     ColumnValueContract,
-    ItemDescriptionContract,
     ItemRepository
 )
 from .board import (

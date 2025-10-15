@@ -16,13 +16,13 @@ from tiferet import (
     Repository,
 )
 
-# ** app
-from .doc import DocumentBlockContract
-
 # *** contracts
 
 # ** contract: item
 class ItemContract(ModelContract):
+    """
+    Represents an item in a Monday.com board.
+    """
     
     # * attribute: id
     id: str
@@ -45,18 +45,6 @@ class ColumnValueContract(ModelContract):
     # * attribute: value
     value: str
 
-# ** contract: item_description
-class ItemDescriptionContract(ModelContract):
-    """
-    Represents the description of a Monday.com item.
-    """
-
-    # * attribute: text
-    text: str
-
-    # * attribute: blocks
-    blocks: List[DocumentBlockContract]
-
 # ** contract: item_detail
 class ItemDetailContract(ItemContract):
     """
@@ -68,9 +56,6 @@ class ItemDetailContract(ItemContract):
 
     # * attribute: parent_item_id
     parent_item_id: str
-
-    # * attribute: description
-    description: ItemDescriptionContract
 
     # * attribute: column_values
     column_values: List[ColumnValueContract]
@@ -142,6 +127,7 @@ class ItemRepository(Repository):
     def query_column_values(self, item_id: str | int, column_ids: List[str] = []) -> List[ColumnValueContract]:
         """
         Queries column values for a given item ID.
+        
         :param item_id: ID of the item for which to query column values.
         :type item_id: str | int
         :param column_ids: Optional list of column IDs to filter the results.

@@ -1,3 +1,3 @@
-"""Tiferet Proxies Requests Tests Exports"""
+"""Tiferet Proxies Requests Proxy Tests Exports"""
 
 # *** exports
