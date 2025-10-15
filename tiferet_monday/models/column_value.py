@@ -1,13 +1,21 @@
+"""Tiferet Monday Column Value Models"""
+
 # *** imports
 
 # ** core
 from typing import List
 
 # ** app
-from tiferet.models import *
+from tiferet import (
+    ModelObject,
+    StringType,
+    IntegerType,
+    ListType,
+    DictType,
+)
 
 # ** model: column_value
-class ColumnValue(ValueObject):
+class ColumnValue(ModelObject):
     """
     Represents a column value in a Monday.com item.
     """
