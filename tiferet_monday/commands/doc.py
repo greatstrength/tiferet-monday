@@ -7,7 +7,7 @@ from typing import List
 from tiferet import Command
 
 # ** app
-from ..contracts import (
+from ..contracts.doc import (
     DocumentContract,
     DocumentBlockContract,
     DocumentRepository

@@ -12,7 +12,7 @@ from typing import (
 from tiferet import Command
 
 # ** app
-from tiferet_monday.contracts import (
+from ..contracts import (
     ItemContract,
     ItemDetailContract,
     ColumnValueContract,

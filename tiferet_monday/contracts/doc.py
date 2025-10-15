@@ -1,13 +1,13 @@
 # *** imports
 
 # ** core
+from abc import abstractmethod
 from typing import List
 
 # ** infra
 from tiferet.contracts import (
     ModelContract,
-    Repository,
-    abstractmethod
+    Repository
 )
 
 # *** contracts

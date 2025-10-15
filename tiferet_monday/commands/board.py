@@ -12,7 +12,7 @@ import json
 from tiferet import Command
 
 # ** app
-from ..contracts import (
+from ..contracts.board import (
     ColumnContract,
     GroupContract,
     ItemContract,
