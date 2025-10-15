@@ -1,12 +1,17 @@
 # *** imports
 
 # ** infra
-from tiferet.models import *
+from tiferet import (
+    ModelObject,
+    StringType,
+    ListType,
+    ModelType,
+)
 
 # *** models
 
 # * model: document_block
-class DocumentBlock(Entity):
+class DocumentBlock(ModelObject):
     """
     Represents a block of content within a document.
     """
@@ -36,7 +41,7 @@ class DocumentBlock(Entity):
     )
 
 # ** model: document
-class Document(Entity):
+class Document(ModelObject):
     """
     Represents a document in the system.
     """

@@ -1,12 +1,15 @@
 # *** imports
 
 # ** infra
-from tiferet.models import *
+from tiferet import (
+    ModelObject,
+    StringType
+)
 
 # *** models
 
 # ** model: column
-class Column(ValueObject):
+class Column(ModelObject):
     """
     Represents a column in a Monday.com board.
     """
@@ -50,7 +53,7 @@ class Column(ValueObject):
     )
 
 # ** model: group
-class Group(ValueObject):
+class Group(ModelObject):
     """
     Represents a group in a Monday.com board.
     """
