@@ -204,7 +204,6 @@ class ItemDetail(Item):
         column_values = [
             ColumnValue.new(**cv) for cv in column_values
         ]
-        
         # Create and return a new ItemDetail instance with the provided attributes.
         return ModelObject.new(
             ItemDetail,
@@ -227,16 +226,16 @@ class ItemDetail(Item):
         :return: The ColumnValue object if found, otherwise None.
         :rtype: ColumnValue | None
         """
-        
+
         # First search on title, as it's more human friendly.
         column_value: ColumnValue = next((cv for cv in self.column_values if cv.name == column_id_or_title), None)
-        
+
         # Return the formatted value if found by title, otherwise search by ID.
         if column_value:
             return column_value
         else:
             return next((cv for cv in self.column_values if cv.id == column_id_or_title), None)
-        
+
     # * method: get_column_values
     def get_column_values(self, column_ids_or_titles: List[str]) -> Tuple[ColumnValue]:
         """
@@ -247,7 +246,7 @@ class ItemDetail(Item):
         :return: A tuple of ColumnValue objects matching the provided IDs.
         :rtype: Tuple[ColumnValue]
         """
-        
+
         # Create map of column ids for quick lookup.
         column_value_map = {cv.id: cv for cv in self.column_values}
 
