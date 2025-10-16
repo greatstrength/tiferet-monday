@@ -170,22 +170,6 @@ class ItemDetailData(DataObject, ItemDetail):
         )
     )
 
-    # * method: to_primitive
-    def to_primitive(self, role: str = 'to_data', **kwargs) -> dict:
-        """
-        Converts the data object to a primitive dictionary representation.
-        :param role: The role to use for serialization.
-        :type role: str
-        :return: A dictionary representation of the data object.
-        :rtype: dict
-        """
-        
-        # Convert the data object to a primitive dictionary using the specified role.
-        return dict(
-            super().to_primitive(role=role, **kwargs),
-            description=self.description.to_primitive() if self.description else None
-        )
-
     # * method: map
     def map(self) -> ItemDetailContract:
         """

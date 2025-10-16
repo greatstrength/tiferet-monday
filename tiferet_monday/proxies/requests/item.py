@@ -3,9 +3,6 @@
 # ** core
 import json
 
-# ** infra
-from moncli import api_v2 as api
-
 # ** app
 from ...data.item import *
 from ...contracts.item import *
@@ -56,14 +53,6 @@ class ItemMondayProxy(ItemRepository, MondayApiRequestsProxy):
                         }
                         parent_item { 
                             id 
-                        }
-                        description {
-                            id
-                            blocks (limit: 1000, page: 1) {
-                                id
-                                type
-                                content
-                            }
                         }
                         column_values {
                             id
