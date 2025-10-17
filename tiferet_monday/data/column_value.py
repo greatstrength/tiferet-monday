@@ -3,7 +3,14 @@
 # *** imports
 
 # ** infra
-from tiferet.data import *
+from tiferet import (
+    DataObject,
+    StringType,
+    IntegerType,
+    ListType,
+    ModelType,
+    DictType,
+)
 
 # ** app
 from ..models import (
