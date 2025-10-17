@@ -6,3 +6,6 @@
 from .settings import (
     MondayApiRequestsProxy,
 )
+from .item import (
+    ItemMondayProxy,
+)

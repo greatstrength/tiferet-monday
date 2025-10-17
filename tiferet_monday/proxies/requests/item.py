@@ -2,10 +2,27 @@
 
 # ** core
 import json
+from typing import (
+    List,
+    Dict,
+    Any
+)
+
+# ** infra
+from tiferet import DataObject
 
 # ** app
-from ...data.item import *
-from ...contracts.item import *
+from ...data import (
+    ItemData,
+    ItemDetailData,
+    ColumnValueData    
+)
+from ...contracts import (
+    ItemContract,
+    ItemDetailContract,
+    ColumnValueContract,
+    ItemRepository
+)
 from .settings import MondayApiRequestsProxy
 
 # *** proxies
