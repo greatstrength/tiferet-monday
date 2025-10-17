@@ -1,11 +1,17 @@
+"""Tiferet Monday Column Value Data Objects"""
+
 # *** imports
 
 # ** infra
 from tiferet.data import *
 
 # ** app
-from ..models.column_value import *
-from ..contracts.item import ColumnValueContract
+from ..models import (
+    ColumnValue
+)
+from ..contracts import (
+    ColumnValueContract
+)
 
 # *** data
 
