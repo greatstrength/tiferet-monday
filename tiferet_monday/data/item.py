@@ -1,14 +1,21 @@
+"""Tiferet Monday Item Data Transfer Objects"""
+
 # *** imports
 
 # ** infra
 from tiferet.data import *
 
 # ** app
-from ..models.item import *
-from .column_value import ColumnValueData
-from ..contracts.item import (
+from ..models import (
+    Item,
+    ItemDetail
+)
+from ..contracts import (
     ItemContract,
     ItemDetailContract
+)
+from .column_value import (
+    ColumnValueData
 )
 
 # *** data
@@ -72,10 +79,10 @@ class ItemData(DataObject, Item):
         Options for the ItemData class.
         """
         serialize_when_none = False
-        roles = dict(
-            to_model=DataObject.deny('board', 'updates'),
-            to_data=DataObject.allow()
-        )
+        roles = {
+            'to_data': DataObject.deny('updates'),
+            'to_model': DataObject.deny('board', 'updates')
+        }
 
     # * attribute: board
     board = ModelType(
