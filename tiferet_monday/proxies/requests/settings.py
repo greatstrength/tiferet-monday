@@ -1,13 +1,28 @@
 # *** imports
 
 # ** core
-from typing import Dict, Any
+from typing import (
+    Dict,
+    Any
+)
 
 # ** infra
-from tiferet.commands import raise_error
+from tiferet import raise_error
 import requests
 
 # *** constants
+
+# ** constant: monday_api_version_header
+MONDAY_API_VERSION_HEADER = 'API-Version'
+
+# ** constant: monday_api_base_url
+MONDAY_API_BASE_URL = 'https://api.monday.com/v2'
+
+# * constant: complexity_budget_exhausted_error_code
+COMPLEXITY_BUDGET_EXHAUSTED_ERROR_CODE = 'COMPLEXITY_BUDGET_EXHAUSTED'
+
+# ** constant: monday_api_error_code
+MONDAY_API_ERROR_CODE = 'MONDAY_API_ERROR'
 
 # *** classes
 
@@ -59,16 +74,17 @@ class MondayApiRequestsProxy(object):
 
         # Add the API version to the headers if provided.
         if api_version:
-            headers['API-Version'] = api_version
+            headers[MONDAY_API_VERSION_HEADER] = api_version
 
-        
+        # Execute the POST request to the Monday.com API.
         response = requests.post(
-            url='https://api.monday.com/v2',
+            url=MONDAY_API_BASE_URL,
             json={'query': query, 'variables': variables},
             headers=headers,
             timeout=timeout
         )
         
+        # Handle and return the response data.
         return self.handle_response(
             response.json(),
             start_node=start_node
@@ -90,16 +106,32 @@ class MondayApiRequestsProxy(object):
         if 'errors' in response:
             
             # Retrieve the complexity limit error if present.
-            complexity_limit_error = next((error for error in response['errors'] if error.get('extensions', {}).get('code') == 'COMPLEXITY_BUDGET_EXHAUSTED'), None)
-            if complexity_limit_error:
-                raise_error.execute(
-                    'COMPLEXITY_BUDGET_EXHAUSTED', 
-                    str(response),
-                    complexity_limit_error.get('extensions', {}).get('retry_in_seconds', 60))
-            
-            # Raise a general Monday.com API error.
-            raise_error.execute('MONDAY_API_ERROR', f'A Monday.com API error occurred: {str(response)}')
+            complexity_limit_error = next((error for error in response['errors'] if self.is_complexity_budget_exhausted(error)), None)
+
+            # Raise a monday API error if the error is not a complexity limit error.
+            if not complexity_limit_error:
+                raise_error.execute(MONDAY_API_ERROR_CODE, f'A Monday.com API error occurred: {str(response)}')
+
+            # Raise a complexity budget exhausted error.
+            raise_error.execute(
+                COMPLEXITY_BUDGET_EXHAUSTED_ERROR_CODE, 
+                str(response),
+                complexity_limit_error.get('extensions', {}).get('retry_in_seconds', 60))
         
         # Return the start node of the response data.
         data = response.get('data', {})
         return start_node(data)
+    
+    # * method: is_complexity_budget_exhausted
+    def is_complexity_budget_exhausted(self, error: Dict[str, Any]) -> bool:
+        """
+        Checks if the complexity budget has been exhausted based on the API response.
+
+        :param response: The response data from the API.
+        :type response: Dict[str, Any]
+        :return: True if the complexity budget is exhausted, False otherwise.
+        :rtype: bool
+        """
+        
+        # Check if the error code matches the complexity budget exhausted code.
+        return error.get('extensions', {}).get('code') == COMPLEXITY_BUDGET_EXHAUSTED_ERROR_CODE
