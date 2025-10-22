@@ -1,8 +1,11 @@
-"""Tiferet Monday Requests Proxy Exports"""
+"""Tiferet Monday Requests Proxies Exports"""
 
 # *** exports
 
 # ** app
 from .settings import (
     MondayApiRequestsProxy,
+)
+from .item import (
+    ItemMondayApiProxy,
 )
