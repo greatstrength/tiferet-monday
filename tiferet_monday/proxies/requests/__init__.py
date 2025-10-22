@@ -8,5 +8,4 @@ from .settings import (
 )
 from .item import (
     ItemMondayApiProxy,
-
 )
