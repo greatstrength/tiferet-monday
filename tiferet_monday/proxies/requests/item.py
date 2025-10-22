@@ -1,3 +1,5 @@
+"""Tiferet Monday Api Item Requests Proxy"""
+
 # *** imports
 
 # ** core
@@ -27,8 +29,8 @@ from .settings import MondayApiRequestsProxy
 
 # *** proxies
 
-# ** proxy: item_moncli_proxy
-class ItemMondayProxy(ItemRepository, MondayApiRequestsProxy):
+# ** proxy: item_monday_api_proxy
+class ItemMondayApiProxy(ItemRepository, MondayApiRequestsProxy):
     """
     Proxy for managing item-related operations using the Moncli client.
     """
@@ -136,6 +138,11 @@ class ItemMondayProxy(ItemRepository, MondayApiRequestsProxy):
             start_node=lambda data: data.get('items', [])
         )
 
+        # If no data is returned, return an empty list.
+        if not data:
+            return []
+
+        # Map the retrieved items data to ItemContract.
         return [DataObject.from_data(
             ItemData,
             **item

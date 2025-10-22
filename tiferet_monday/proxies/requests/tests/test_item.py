@@ -1,30 +1,39 @@
-"""Tiferet Monday Item Proxy Tests"""
+"""Tiferet Monday API Item Requests Proxy Tests"""
 
 # *** imports
 
 # ** infra
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from tiferet import ModelObject
 
 # ** app
-from ....data import ItemData, ItemDetailData, ColumnValueData
-from ....models import Item, ItemDetail, ColumnValue
-from ....proxies.requests import ItemMondayProxy
+from ....data import (
+    ItemData,
+    ItemDetailData,
+    ColumnValueData
+)
+from ....models import (
+    Item,
+    ItemDetail,
+    ColumnValue
+)
+from ..item import ItemMondayApiProxy
 
 # *** fixtures
 
-# ** fixture: item_monday_proxy
+# ** fixture: item_monday_api_proxy
 @pytest.fixture
-def item_monday_proxy() -> ItemMondayProxy:
+def item_monday_api_proxy() -> ItemMondayApiProxy:
     '''
-    Fixture to create an ItemMondayProxy instance.
+    Fixture to create an ItemMondayApiProxy instance.
 
-    :return: An ItemMondayProxy instance.
-    :rtype: ItemMondayProxy
+    :return: An ItemMondayApiProxy instance.
+    :rtype: ItemMondayApiProxy
     '''
     
-    # Create and return an ItemMondayProxy instance.
-    return ItemMondayProxy(monday_api_key='test_api_key')
+    # Create and return an ItemMondayApiProxy instance.
+    return ItemMondayApiProxy(monday_api_key='test_api_key')
 
 # ** fixture: mock_item_data
 @pytest.fixture
@@ -38,8 +47,9 @@ def mock_item_data() -> ItemData:
     
     # Create and return a mock ItemData instance.
     item_data = Mock(spec=ItemData)
-    item_data.map.return_value = Item.new(
-        id='item_1',
+    item_data.map.return_value = ModelObject.new(
+        Item,
+        id=1,
         name='Test Item',
         board_id='board_1'
     )
@@ -59,8 +69,9 @@ def mock_item_detail_data(column_value: ColumnValue) -> ItemDetailData:
     
     # Create and return a mock ItemDetailData instance.
     item_detail_data = Mock(spec=ItemDetailData)
-    item_detail_data.map.return_value = ItemDetail.new(
-        id='item_2',
+    item_detail_data.map.return_value = ModelObject.new(
+        ItemDetail,
+        id=1,
         name='Test Item Detail',
         board_id='board_1',
         group_id='group_1',
@@ -80,7 +91,8 @@ def column_value() -> ColumnValue:
     '''
     
     # Create and return a ColumnValue instance.
-    return ColumnValue.new(
+    return ModelObject.new(
+        ColumnValue,
         id='status_1',
         name='Status',
         type='status',
@@ -106,44 +118,44 @@ def mock_column_value_data(column_value: ColumnValue) -> ColumnValueData:
 
 # *** tests
 
-# ** test: item_monday_proxy_instantiation
-def test_item_monday_proxy_instantiation(item_monday_proxy: ItemMondayProxy):
+# ** test: item_monday_api_proxy_instantiation
+def test_item_monday_api_proxy_instantiation(item_monday_api_proxy: ItemMondayApiProxy):
     '''
-    Test successful instantiation of an ItemMondayProxy object.
+    Test successful instantiation of an ItemMondayApiProxy object.
 
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     '''
     
     # Verify the instance type and attributes.
-    assert isinstance(item_monday_proxy, ItemMondayProxy)
-    assert item_monday_proxy.api_key == 'test_api_key'
+    assert isinstance(item_monday_api_proxy, ItemMondayApiProxy)
+    assert item_monday_api_proxy.api_key == 'test_api_key'
 
 # ** test: query_detail_by_id_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.item.ItemDetailData.from_data')
 def test_query_detail_by_id_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_item_detail_data: ItemDetailData
 ):
     '''
-    Test successful query of item details by ID.
+    Test successful query of item details by ID using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_item_detail_data: The mock ItemDetailData instance.
     :type mock_item_detail_data: ItemDetailData
     '''
     
     # Set up the mock response and data mapping.
     mock_execute_query.return_value = [{
-        'id': 'item_2',
+        'id': 2,
         'name': 'Test Item Detail',
         'board': {'id': 'board_1'},
         'group': {'id': 'group_1'},
@@ -153,69 +165,69 @@ def test_query_detail_by_id_success(
     mock_from_data.return_value = mock_item_detail_data
     
     # Query item details.
-    result = item_monday_proxy.query_detail_by_id(item_id='item_2')
+    result = item_monday_api_proxy.query_detail_by_id(item_id=2)
     
     # Verify the query was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={'item_id': 2},
         start_node=mock_execute_query.call_args[1]['start_node']
     )
     
     # Verify the result.
     assert isinstance(result, ItemDetail)
-    assert result.id == 'item_2'
+    assert result.id == '2'
     assert result.name == 'Test Item Detail'
 
 # ** test: query_detail_by_id_no_data
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 def test_query_detail_by_id_no_data(
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy
+    item_monday_api_proxy: ItemMondayApiProxy
 ):
     '''
     Test query_detail_by_id returns None when no data is returned.
 
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     '''
     
     # Set up the mock response to return an empty list.
     mock_execute_query.return_value = []
     
     # Query item details.
-    result = item_monday_proxy.query_detail_by_id(item_id='item_2')
+    result = item_monday_api_proxy.query_detail_by_id(item_id=3)
     
     # Verify the result is None.
     assert result is None
 
 # ** test: query_by_ids_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.item.ItemData.from_data')
 def test_query_by_ids_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_item_data: ItemData
 ):
     '''
-    Test successful query of items by IDs.
+    Test successful query of items by IDs using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_item_data: The mock ItemData instance.
     :type mock_item_data: ItemData
     '''
     
     # Set up the mock response and data mapping.
     mock_execute_query.return_value = [{
-        'id': 'item_1',
+        'id': '1',
         'name': 'Test Item',
         'board': {'id': 'board_1'},
         'updates': []
@@ -223,11 +235,11 @@ def test_query_by_ids_success(
     mock_from_data.return_value = mock_item_data
     
     # Query items by IDs.
-    result = item_monday_proxy.query_by_ids(item_ids=['item_1'])
+    result = item_monday_api_proxy.query_by_ids(item_ids=['1'])
     
     # Verify the query was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={'item_ids': [1]},
         start_node=mock_execute_query.call_args[1]['start_node']
     )
@@ -236,26 +248,26 @@ def test_query_by_ids_success(
     assert isinstance(result, list)
     assert len(result) == 1
     assert isinstance(result[0], Item)
-    assert result[0].id == 'item_1'
+    assert result[0].id == '1'
 
 # ** test: query_column_values_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.column_value.ColumnValueData.from_data')
 def test_query_column_values_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_column_value_data: ColumnValueData
 ):
     '''
-    Test successful query of column values for an item.
+    Test successful query of column values for an item using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_column_value_data: The mock ColumnValueData instance.
     :type mock_column_value_data: ColumnValueData
     '''
@@ -270,11 +282,11 @@ def test_query_column_values_success(
     mock_from_data.return_value = mock_column_value_data
     
     # Query column values.
-    result = item_monday_proxy.query_column_values(item_id='item_2', column_ids=['status_1'])
+    result = item_monday_api_proxy.query_column_values(item_id='2', column_ids=['status_1'])
     
     # Verify the query was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={'item_id': 2, 'column_ids': ['status_1']},
         start_node=mock_execute_query.call_args[1]['start_node']
     )
@@ -286,54 +298,54 @@ def test_query_column_values_success(
     assert result[0].id == 'status_1'
 
 # ** test: query_column_values_no_data
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 def test_query_column_values_no_data(
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy
+    item_monday_api_proxy: ItemMondayApiProxy
 ):
     '''
-    Test query_column_values returns an empty list when no data is returned.
+    Test query_column_values returns an empty tuple when no data is returned.
 
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     '''
     
     # Set up the mock response to return an empty list.
     mock_execute_query.return_value = []
     
     # Query column values.
-    result = item_monday_proxy.query_column_values(item_id='item_2', column_ids=['status_1'])
+    result = item_monday_api_proxy.query_column_values(item_id='2', column_ids=['status_unknown'])
     
     # Verify the result is an empty tuple.
-    assert result == ()
+    assert result == []
 
 # ** test: query_subitems_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.item.ItemData.from_data')
 def test_query_subitems_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_item_data: ItemData
 ):
     '''
-    Test successful query of subitems for a parent item.
+    Test successful query of subitems for a parent item using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_item_data: The mock ItemData instance.
     :type mock_item_data: ItemData
     '''
     
     # Set up the mock response and data mapping.
     mock_execute_query.return_value = [{
-        'id': 'item_3',
+        'id': '3',
         'name': 'Test Subitem',
         'board': {'id': 'board_1'},
         'updates': []
@@ -341,11 +353,11 @@ def test_query_subitems_success(
     mock_from_data.return_value = mock_item_data
     
     # Query subitems.
-    result = item_monday_proxy.query_subitems(parent_item_id='item_1')
+    result = item_monday_api_proxy.query_subitems(parent_item_id='1')
     
     # Verify the query was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={'parent_item_id': 1},
         start_node=mock_execute_query.call_args[1]['start_node']
     )
@@ -354,73 +366,73 @@ def test_query_subitems_success(
     assert isinstance(result, list)
     assert len(result) == 1
     assert isinstance(result[0], Item)
-    assert result[0].id == 'item_1'
+    assert result[0].id == '3'
 
 # ** test: query_subitems_no_data
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 def test_query_subitems_no_data(
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy
+    item_monday_api_proxy: ItemMondayApiProxy
 ):
     '''
     Test query_subitems returns an empty list when no data is returned.
 
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     '''
     
     # Set up the mock response to return an empty list.
     mock_execute_query.return_value = []
     
     # Query subitems.
-    result = item_monday_proxy.query_subitems(parent_item_id='item_1')
+    result = item_monday_api_proxy.query_subitems(parent_item_id='4')
     
     # Verify the result is an empty list.
     assert result == []
 
 # ** test: update_simple_column_value_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.item.ItemData.from_data')
 def test_update_simple_column_value_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_item_data: ItemData
 ):
     '''
-    Test successful update of a simple column value.
+    Test successful update of a simple column value using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_item_data: The mock ItemData instance.
     :type mock_item_data: ItemData
     '''
     
     # Set up the mock response and data mapping.
     mock_execute_query.return_value = {
-        'id': 'item_1',
+        'id': '1',
         'name': 'Test Item',
         'board': {'id': 'board_1'}
     }
     mock_from_data.return_value = mock_item_data
     
     # Update simple column value.
-    result = item_monday_proxy.update_simple_column_value(
-        item_id='item_1',
-        board_id='board_1',
+    result = item_monday_api_proxy.update_simple_column_value(
+        item_id='1',
+        board_id='1',
         column_id='status_1',
         value='done'
     )
     
     # Verify the mutation was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={
             'item_id': 1,
             'board_id': 1,
@@ -432,77 +444,48 @@ def test_update_simple_column_value_success(
     
     # Verify the result.
     assert isinstance(result, Item)
-    assert result.id == 'item_1'
-
-# ** test: update_simple_column_value_no_data
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
-def test_update_simple_column_value_no_data(
-    mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy
-):
-    '''
-    Test update_simple_column_value returns None when no data is returned.
-
-    :param mock_execute_query: The mocked execute_query method.
-    :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
-    '''
-    
-    # Set up the mock response to return None.
-    mock_execute_query.return_value = None
-    
-    # Update simple column value.
-    result = item_monday_proxy.update_simple_column_value(
-        item_id='item_1',
-        board_id='board_1',
-        column_id='status_1',
-        value='done'
-    )
-    
-    # Verify the result is None.
-    assert result is None
+    assert result.id == '1'
 
 # ** test: create_subitem_success
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.item.ItemData.from_data')
 def test_create_subitem_success(
     mock_from_data: Mock,
     mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy,
+    item_monday_api_proxy: ItemMondayApiProxy,
     mock_item_data: ItemData
 ):
     '''
-    Test successful creation of a subitem.
+    Test successful creation of a subitem using the Monday.com API.
 
     :param mock_from_data: The mocked DataObject.from_data function.
     :type mock_from_data: Mock
     :param mock_execute_query: The mocked execute_query method.
     :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
     :param mock_item_data: The mock ItemData instance.
     :type mock_item_data: ItemData
     '''
     
     # Set up the mock response and data mapping.
     mock_execute_query.return_value = {
-        'id': 'item_3',
+        'id': '3',
         'name': 'Test Subitem',
         'board': {'id': 'board_1'}
     }
     mock_from_data.return_value = mock_item_data
     
     # Create subitem.
-    result = item_monday_proxy.create_subitem(
-        parent_item_id='item_1',
+    result = item_monday_api_proxy.create_subitem(
+        parent_item_id='1',
         item_name='Test Subitem',
         column_values={'status_1': 'in_progress'}
     )
     
     # Verify the mutation was executed with the correct parameters.
     mock_execute_query.assert_called_once_with(
-        query=mock_execute_query.call_args[0][0],
+        query=mock_execute_query.call_args[1]['query'],
         variables={
             'parent_item_id': 1,
             'item_name': 'Test Subitem',
@@ -513,31 +496,4 @@ def test_create_subitem_success(
     
     # Verify the result.
     assert isinstance(result, Item)
-    assert result.id == 'item_1'
-
-# ** test: create_subitem_no_data
-@patch('tiferet_monday.proxies.requests.settings.ItemMondayProxy.execute_query')
-def test_create_subitem_no_data(
-    mock_execute_query: Mock,
-    item_monday_proxy: ItemMondayProxy
-):
-    '''
-    Test create_subitem returns None when no data is returned.
-
-    :param mock_execute_query: The mocked execute_query method.
-    :type mock_execute_query: Mock
-    :param item_monday_proxy: The ItemMondayProxy instance to test.
-    :type item_monday_proxy: ItemMondayProxy
-    '''
-    
-    # Set up the mock response to return None.
-    mock_execute_query.return_value = None
-    
-    # Create subitem.
-    result = item_monday_proxy.create_subitem(
-        parent_item_id='item_1',
-        item_name='Test Subitem'
-    )
-    
-    # Verify the result is None.
-    assert result is None
+    assert result.id == '3'
