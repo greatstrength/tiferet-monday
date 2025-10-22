@@ -16,7 +16,7 @@ from ...models import (
     FileValue,
     DocValue
 )
-from ...data import (
+from ..column_value import (
     ColumnData,
     ColumnValueData
 )

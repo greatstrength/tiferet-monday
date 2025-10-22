@@ -250,6 +250,30 @@ def test_query_by_ids_success(
     assert isinstance(result[0], Item)
     assert result[0].id == '1'
 
+# ** test: query_by_ids_no_data
+@patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
+def test_query_by_ids_no_data(
+    mock_execute_query: Mock,
+    item_monday_api_proxy: ItemMondayApiProxy
+):
+    '''
+    Test query_by_ids returns an empty list when no data is returned.
+
+    :param mock_execute_query: The mocked execute_query method.
+    :type mock_execute_query: Mock
+    :param item_monday_api_proxy: The ItemMondayApiProxy instance to test.
+    :type item_monday_api_proxy: ItemMondayApiProxy
+    '''
+    
+    # Set up the mock response to return an empty list.
+    mock_execute_query.return_value = []
+    
+    # Query items by IDs.
+    result = item_monday_api_proxy.query_by_ids(item_ids=['999'])
+    
+    # Verify the result is an empty list.
+    assert result == []
+
 # ** test: query_column_values_success
 @patch('tiferet_monday.proxies.requests.item.ItemMondayApiProxy.execute_query')
 @patch('tiferet_monday.data.column_value.ColumnValueData.from_data')

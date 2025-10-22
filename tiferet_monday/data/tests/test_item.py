@@ -13,8 +13,10 @@ from ...models import (
 )
 from ...data import (
     ColumnData,
-    ColumnValueData,
-    ItemBoardData, 
+    ColumnValueData
+)
+from ..item import (
+    ItemBoardData,
     ItemGroupData,
     ItemData,
     ItemDetailData

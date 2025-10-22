@@ -1,3 +1,5 @@
+"""Tiferet Monday Requests Proxy Settings"""
+
 # *** imports
 
 # ** core

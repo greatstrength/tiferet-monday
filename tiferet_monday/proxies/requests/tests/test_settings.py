@@ -1,4 +1,4 @@
-"""Tiferet Monday API Proxy Tests"""
+"""Tiferet Monday Requests Proxy Tests"""
 
 # *** imports
 
