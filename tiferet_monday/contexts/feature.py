@@ -1,21 +1,14 @@
+"""Tiferet Monday Feature Context"""
+
 # *** imports
 
 # ** core
-from typing import (
-    Any, 
-    Callable
-)
+from typing import Any, Callable
 from time import sleep
 
 # ** infra
-from tiferet import (
-    Command,
-    TiferetError
-)
-from tiferet.contexts import (
-    RequestContext,
-    FeatureContext
-)
+from tiferet import Command, TiferetError
+from tiferet.contexts import RequestContext, FeatureContext
 
 # *** contexts
 
@@ -75,7 +68,7 @@ class MondayFeatureContext(FeatureContext):
         :type kwargs: dict
         '''
 
-        # Call the superclass method to handle the command
+        # Call the superclass method to handle the command.
         try:
             return super().handle_command(
                 command=command,
@@ -85,15 +78,20 @@ class MondayFeatureContext(FeatureContext):
                 **kwargs
             )
         
+        # Catch TiferetError exceptions.
         except TiferetError as e:
-            if e.error_code == 'COMPLEXITY_BUDGET_EXHAUSTED':
-                self.handle_retry(
-                    e.args[1],
-                    handler=lambda: self.handle_command(
-                        command=command,
-                        request=request,
-                        data_key=data_key,
-                        pass_on_error=pass_on_error,
-                        **kwargs
-                    )
+
+            # Raise the exception for non-complexity budget exhausted errors.
+            if not e.error_code == 'COMPLEXITY_BUDGET_EXHAUSTED':
+                raise e
+            
+            return self.handle_retry(
+                e.args[1],
+                handler=lambda: self.handle_command(
+                    command=command,
+                    request=request,
+                    data_key=data_key,
+                    pass_on_error=pass_on_error,
+                    **kwargs
                 )
+            )
