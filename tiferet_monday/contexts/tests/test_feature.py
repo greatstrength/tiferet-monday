@@ -5,18 +5,13 @@
 # ** infra
 import pytest
 from unittest.mock import Mock, patch
-from tiferet import (
-    ModelObject,
-    Command,
-    TiferetError
-)
+from tiferet import Command, TiferetError
 from tiferet.contexts import (
     FeatureContext,
     ContainerContext,
     RequestContext
 )
 from tiferet.contexts.feature import FeatureService
-from tiferet.models import Feature
 
 # ** app
 from ..feature import MondayFeatureContext
@@ -90,43 +85,21 @@ def test_command() -> Command:
     :rtype: Command
     '''
     
-    class TestCommand(Command):
-        '''A mock command for testing purposes.'''
-        
-        def execute(self, key: str, param: str = None, **kwargs) -> dict:
-            '''Mock execute method that returns a test response.'''
-            
-            # Verify that the request exists.
-            self.verify(key, 'KEY_NOT_FOUND', 'No key provided for command execution.')
-            
-            # Mock response data.
-            if not param:
-                return {"status": "success", "data": {"key": key}}
-            return {"status": "success", "data": {"key": key, "param": param}}
-    
-    # Return an instance of the mock command.
-    return TestCommand()
+    # Create and return a mock Command instance.
+    return Mock(spec=Command)
 
-# ** fixture: feature
+# ** fixture: request_context
 @pytest.fixture
-def feature() -> Feature:
+def request_context() -> RequestContext:
     '''
-    Fixture to provide a Feature instance.
+    Fixture to provide a mock RequestContext instance.
 
-    :return: A Feature instance.
-    :rtype: Feature
+    :return: A mock RequestContext instance.
+    :rtype: RequestContext
     '''
     
-    # Create and return a Feature instance.
-    return ModelObject.new(
-        Feature,
-        id='test_group.test_feature',
-        group_id='test_group',
-        feature_key='test_feature',
-        name='Test Feature',
-        description='A feature for testing purposes.',
-        commands=[]
-    )
+    # Create and return a mock RequestContext instance.
+    return Mock(spec=RequestContext)
 
 # *** tests
 
@@ -179,7 +152,8 @@ def test_handle_retry_success(
 # ** test: handle_command_success
 def test_handle_command_success(
     monday_feature_context: MondayFeatureContext,
-    test_command: Command
+    test_command: Command,
+    request: RequestContext
 ):
     '''
     Test successful command handling in MondayFeatureContext.
@@ -188,6 +162,8 @@ def test_handle_command_success(
     :type monday_feature_context: MondayFeatureContext
     :param test_command: The mock Command instance.
     :type test_command: Command
+    :param request: The mock RequestContext instance.
+    :type request: RequestContext
     '''
     
     # Create a mock request.
@@ -215,7 +191,8 @@ def test_handle_command_success(
 def test_handle_command_complexity_error_retry(
     mock_sleep: Mock,
     monday_feature_context: MondayFeatureContext,
-    test_command: Command
+    test_command: Command,
+    request: RequestContext
 ):
     '''
     Test handling a complexity budget exhausted error with retry in MondayFeatureContext.
@@ -226,10 +203,9 @@ def test_handle_command_complexity_error_retry(
     :type monday_feature_context: MondayFeatureContext
     :param test_command: The mock Command instance.
     :type test_command: Command
+    :param request: The mock RequestContext instance.
+    :type request: RequestContext
     '''
-    
-    # Create a mock request.
-    request = RequestContext(data={"key": "value"})
     
     # Mock the parent handle_command to raise a complexity error on first call and succeed on retry.
     with patch.object(FeatureContext, 'handle_command') as mock_super_handle:
@@ -253,6 +229,8 @@ def test_handle_command_complexity_error_retry(
 # ** test: handle_command_non_complexity_error
 def test_handle_command_non_complexity_error(
     monday_feature_context: MondayFeatureContext,
+    test_command: Command,
+    request: RequestContext
 ):
     '''
     Test handling a non-complexity error in MondayFeatureContext raises the error.
@@ -261,12 +239,10 @@ def test_handle_command_non_complexity_error(
     :type monday_feature_context: MondayFeatureContext
     :param test_command: The mock Command instance.
     :type test_command: Command
+    :param request: The mock RequestContext instance.
+    :type request: RequestContext
     '''
 
-    test_command = Mock(spec=Command)
-    
-    # Create a mock request that will raise a non-complexity error.
-    request = RequestContext(data={'key': None})
     
     # Expect the non-complexity error to be raised without retry.
     with pytest.raises(TiferetError) as exc_info:
