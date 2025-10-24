@@ -18,3 +18,4 @@ from .item import (
     Update,
     Reply,
 )
+from .doc import Document, DocumentBlock
