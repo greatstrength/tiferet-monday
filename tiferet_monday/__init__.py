@@ -7,8 +7,8 @@
 # Use a try-except block to avoid import errors on build systems.
 try:
     from .proxies import MondayApiRequestsProxy as MondayApiProxy
-except ImportError:
+except:
     pass
 
 # *** version
-__version__ = '0.1.0'
+__version__ = '0.1.2'

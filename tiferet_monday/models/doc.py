@@ -28,7 +28,6 @@ class DocumentBlock(ModelObject):
 
     # * attribute: type
     type = StringType(
-        required=True,
         default='text',
         metadata=dict(
             description='The type of the document block (e.g., text, image, etc.).'
@@ -37,7 +36,6 @@ class DocumentBlock(ModelObject):
 
     # * attribute: content
     content = StringType(
-        required=True,
         default='',
         metadata=dict(
             description='The content of the document block.'

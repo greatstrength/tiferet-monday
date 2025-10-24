@@ -204,6 +204,7 @@ class ItemDetail(Item):
         column_values = [
             ColumnValue.new(**cv) for cv in column_values
         ]
+
         # Create and return a new ItemDetail instance with the provided attributes.
         return ModelObject.new(
             ItemDetail,
