@@ -1,14 +1,20 @@
 # *** imports
 
+# ** core
+from typing import List
+
+# ** infra
+from tiferet import DataObject
+
 # ** app
-from ...contracts.doc import *
-from ...data.doc import *
+from ...models import Document, DocumentBlock
+from ...data import DocumentData
 from .settings import MondayApiRequestsProxy
 
 # *** proxies
 
 # ** proxy: document_monday_proxy
-class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
+class DocumentMondayApiProxy(MondayApiRequestsProxy):
     """
     Proxy for managing document-related operations using the Monday.com API.
     """
@@ -26,7 +32,7 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
         super().__init__(monday_api_key)
 
     # * method: create_doc_in_column
-    def create_doc_in_column(self, item_id: str | int, column_id: str) -> DocumentContract:
+    def create_doc_in_column(self, item_id: str | int, column_id: str) -> Document:
         """
         Creates a document in the specified column of an item using the Monday.com API.
 
@@ -35,7 +41,7 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
         :param column_id: ID of the column where the document will be created.
         :type column_id: str
         :return: The created document.
-        :rtype: DocumentContract
+        :rtype: Document
         """
         
         # Execute the mutation to create a document in the specified column.
@@ -59,14 +65,14 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
         ).map()
     
     # * method: query_by_object_ids
-    def query_by_object_ids(self, object_ids: List[str]) -> List[DocumentContract]:
+    def query_by_object_ids(self, object_ids: List[str]) -> List[Document]:
         """
         Queries documents by their object IDs using the Monday.com API.
 
         :param object_ids: List of object IDs of the documents to retrieve.
         :type object_ids: List[str]
         :return: List of documents matching the specified object IDs.
-        :rtype: List[DocumentContract]
+        :rtype: List[Document]
         """
 
         # Execute the query to retrieve documents by their object IDs.
@@ -85,7 +91,7 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
                     }
                 }
             """,
-            variables={'objectIds': object_ids},
+            variables={'objectIds': [int(id) for id in object_ids]},
             start_node=lambda data: data.get('docs', [])
         )
 
@@ -118,7 +124,7 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
         )
 
     # * method: query_doc_blocks
-    def query_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlockContract]:
+    def query_doc_blocks(self, doc_id: str | int, limit: int = 25, page: int = 1) -> List[DocumentBlock]:
         """
         Reads the blocks of a specified document using the Monday.com API.
 
@@ -129,7 +135,7 @@ class DocumentMondayProxy(MondayApiRequestsProxy, DocumentRepository):
         :param page: Page number for pagination (default is 1).
         :type page: int
         :return: List of blocks in the document.
-        :rtype: List[DocumentBlockContract]
+        :rtype: List[DocumentBlock]
         """
         
         # Execute the query to retrieve the document's blocks.
