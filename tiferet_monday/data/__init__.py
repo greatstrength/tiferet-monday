@@ -13,3 +13,4 @@ from .item import (
     ItemData,
     ItemDetailData
 )
+from .doc import DocumentData

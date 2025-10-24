@@ -1,13 +1,12 @@
+"""Tiferet Monday Document Data Objects"""
+
 # *** imports
 
 # ** infra
-from tiferet.data import *
+from tiferet import DataObject
 
 # ** app
-from ..models.doc import *
-from ..contracts.doc import (
-    DocumentContract
-)
+from ..models import Document
 
 # *** data
 
@@ -46,7 +45,7 @@ class DocumentData(DataObject, Document):
         )
 
     # * method: map
-    def map(self) -> DocumentContract:
+    def map(self) -> Document:
         """
         Maps the DocumentData instance to a DocumentContract.
 
