@@ -91,7 +91,7 @@ class DocumentMondayApiProxy(MondayApiRequestsProxy):
                     }
                 }
             """,
-            variables={'objectIds': object_ids},
+            variables={'objectIds': [int(object_id) for object_id in object_ids]},
             start_node=lambda data: data.get('docs', [])
         )
 
