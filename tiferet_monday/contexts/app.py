@@ -11,10 +11,16 @@ from .board import BoardContext
 from .item import ItemContext
 from ..domain.board import Board
 from ..domain.user import Team, Account
+from ..domain.workspace import Workspace
+from ..domain.tag import Tag
+from ..domain.webhook import Webhook
 from ..events.board import GetBoard, CreateBoard
 from ..events.item import GetItems
 from ..events.user import GetUsers, GetMe, GetTeams, GetAccount
 from ..events.update import CreateNotification
+from ..events.workspace import GetWorkspaces, CreateWorkspace as CreateWorkspaceEvent
+from ..events.tag import GetTags, CreateOrGetTag
+from ..events.webhook import CreateWebhook as CreateWebhookEvent, DeleteWebhook
 
 
 # *** contexts
@@ -246,6 +252,112 @@ class MondayApp(MondayContext):
             text=text,
             target_type=target_type,
         )
+
+    # * method: get_workspaces
+    def get_workspaces(self, ids: List[str] = None, kind: str = None, limit: int = 25) -> List[Workspace]:
+        '''
+        Retrieve workspaces.
+
+        :param ids: Optional list of workspace IDs.
+        :type ids: List[str]
+        :param kind: Optional kind filter (open / closed).
+        :type kind: str
+        :param limit: Number of workspaces.
+        :type limit: int
+        :return: List of Workspace domain objects.
+        :rtype: List[Workspace]
+        '''
+
+        # Execute the get workspaces event.
+        event = GetWorkspaces(workspace_service=self._workspace_service)
+        return event.execute(ids=ids, kind=kind, limit=limit)
+
+    # * method: create_workspace
+    def create_workspace(self, name: str, kind: str = 'open', description: str = None) -> Workspace:
+        '''
+        Create a new workspace.
+
+        :param name: The workspace name.
+        :type name: str
+        :param kind: The workspace kind (open / closed).
+        :type kind: str
+        :param description: Optional description.
+        :type description: str
+        :return: The created Workspace domain object.
+        :rtype: Workspace
+        '''
+
+        # Execute the create workspace event.
+        event = CreateWorkspaceEvent(workspace_service=self._workspace_service)
+        return event.execute(name=name, kind=kind, description=description)
+
+    # * method: get_tags
+    def get_tags(self, ids: List[str] = None) -> List[Tag]:
+        '''
+        Retrieve tags.
+
+        :param ids: Optional list of tag IDs.
+        :type ids: List[str]
+        :return: List of Tag domain objects.
+        :rtype: List[Tag]
+        '''
+
+        # Execute the get tags event.
+        event = GetTags(tag_service=self._tag_service)
+        return event.execute(ids=ids)
+
+    # * method: create_or_get_tag
+    def create_or_get_tag(self, tag_name: str, board_id: str = None) -> Tag:
+        '''
+        Create a tag or get it if it already exists.
+
+        :param tag_name: The tag name.
+        :type tag_name: str
+        :param board_id: Optional board ID.
+        :type board_id: str
+        :return: The Tag domain object.
+        :rtype: Tag
+        '''
+
+        # Execute the create or get tag event.
+        event = CreateOrGetTag(tag_service=self._tag_service)
+        return event.execute(tag_name=tag_name, board_id=board_id)
+
+    # * method: create_webhook
+    def create_webhook(self, board_id: str, url: str, event_type: str, config: str = None) -> Webhook:
+        '''
+        Create a webhook on a board.
+
+        :param board_id: The board ID.
+        :type board_id: str
+        :param url: The callback URL.
+        :type url: str
+        :param event_type: The event type.
+        :type event_type: str
+        :param config: Optional JSON config.
+        :type config: str
+        :return: The created Webhook domain object.
+        :rtype: Webhook
+        '''
+
+        # Execute the create webhook event.
+        event = CreateWebhookEvent(webhook_service=self._webhook_service)
+        return event.execute(board_id=board_id, url=url, event=event_type, config=config)
+
+    # * method: delete_webhook
+    def delete_webhook(self, webhook_id: str) -> dict:
+        '''
+        Delete a webhook.
+
+        :param webhook_id: The webhook ID.
+        :type webhook_id: str
+        :return: The deleted webhook data.
+        :rtype: dict
+        '''
+
+        # Execute the delete webhook event.
+        event = DeleteWebhook(webhook_service=self._webhook_service)
+        return event.execute(webhook_id=webhook_id)
 
     # * method: __repr__
     def __repr__(self) -> str:

@@ -7,6 +7,9 @@ from .settings import MondayDomainObject
 from .board import Board, Column, Group
 from .item import Item, Update, Reply
 from .user import User, Team, Account
+from .workspace import Workspace
+from .tag import Tag
+from .webhook import Webhook
 from .column_value import (
     ColumnValue,
     StatusValue,
