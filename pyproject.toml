@@ -9,8 +9,9 @@ license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "tiferet>=1.1.11",
+    "tiferet>=1.1.1",
     "requests>=2.32.4",
+    "pydantic>=2.0.0",
 ]
 
 [project.urls]
@@ -32,12 +33,14 @@ build-backend = "setuptools.build_meta"
 where = ["."]
 include = [
     "tiferet_monday",
+    "tiferet_monday.assets",
     "tiferet_monday.contexts",
-    "tiferet_monday.contracts",
-    "tiferet_monday.data",
-    "tiferet_monday.models",
-    "tiferet_monday.proxies",
-    "tiferet_monday.proxies.requests"
+    "tiferet_monday.domain",
+    "tiferet_monday.events",
+    "tiferet_monday.interfaces",
+    "tiferet_monday.mappers",
+    "tiferet_monday.repos",
+    "tiferet_monday.utils",
 ]
 
 [tool.setuptools.dynamic]
