@@ -12,6 +12,7 @@ try:
     from .contexts.app import MondayApp
     from .contexts.board import BoardContext
     from .contexts.item import ItemContext
+    from .contexts.user import UserContext
     from .repos.settings import MondayApiError
 except ImportError:
     pass

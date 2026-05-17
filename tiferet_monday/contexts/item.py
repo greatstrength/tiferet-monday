@@ -18,6 +18,7 @@ from ..events.item import (
     ArchiveItem,
     CreateItemUpdate,
 )
+from ..events.update import QueryUpdates
 
 # ** infra
 import pydantic
@@ -204,6 +205,21 @@ class ItemContext(MondayContext):
             board_service=self._board_service,
             item_service=self._item_service,
         )
+
+    # * method: get_updates
+    def get_updates(self, limit: int = 25) -> List[Update]:
+        '''
+        Query updates (comments) for this item.
+
+        :param limit: Number of updates to retrieve.
+        :type limit: int
+        :return: List of Update domain objects.
+        :rtype: List[Update]
+        '''
+
+        # Execute the query updates event.
+        event = QueryUpdates(update_service=self._update_service)
+        return event.execute(item_id=self.id, limit=limit)
 
     # * method: add_update
     def add_update(self, body: str) -> Update:

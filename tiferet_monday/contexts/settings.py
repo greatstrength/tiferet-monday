@@ -9,6 +9,8 @@ from typing import Any
 from ..repos.settings import MondayApiProxy
 from ..repos.board import BoardApiProxy
 from ..repos.item import ItemApiProxy
+from ..repos.user import UserApiProxy
+from ..repos.update import UpdateApiProxy
 
 
 # *** contexts
@@ -29,8 +31,19 @@ class MondayContext:
     # * attribute: _item_service
     _item_service: ItemApiProxy
 
+    # * attribute: _user_service
+    _user_service: UserApiProxy
+
+    # * attribute: _update_service
+    _update_service: UpdateApiProxy
+
     # * init
-    def __init__(self, api_key: str, board_service: BoardApiProxy = None, item_service: ItemApiProxy = None):
+    def __init__(self,
+                 api_key: str,
+                 board_service: BoardApiProxy = None,
+                 item_service: ItemApiProxy = None,
+                 user_service: UserApiProxy = None,
+                 update_service: UpdateApiProxy = None):
         '''
         Initialize the Monday context.
 
@@ -40,6 +53,10 @@ class MondayContext:
         :type board_service: BoardApiProxy
         :param item_service: Optional pre-initialized item service.
         :type item_service: ItemApiProxy
+        :param user_service: Optional pre-initialized user service.
+        :type user_service: UserApiProxy
+        :param update_service: Optional pre-initialized update service.
+        :type update_service: UpdateApiProxy
         '''
 
         # Set the API key.
@@ -48,3 +65,5 @@ class MondayContext:
         # Set or lazily initialize services.
         self._board_service = board_service or BoardApiProxy(api_key)
         self._item_service = item_service or ItemApiProxy(api_key)
+        self._user_service = user_service or UserApiProxy(api_key)
+        self._update_service = update_service or UpdateApiProxy(api_key)
