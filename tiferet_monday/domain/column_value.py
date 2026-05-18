@@ -369,3 +369,213 @@ class TimelineValue(ColumnValue):
         default=None,
         description='The end date of the timeline.'
     )
+
+
+# ** model: tags_value
+class TagsValue(ColumnValue):
+    '''
+    A tags column value.
+    '''
+
+    # * attribute: type
+    type: Literal['tags'] = 'tags'
+
+    # * attribute: tag_ids
+    tag_ids: List[int] = Field(
+        default_factory=list,
+        description='The list of tag IDs.'
+    )
+
+
+# ** model: color_picker_value
+class ColorPickerValue(ColumnValue):
+    '''
+    A color picker column value.
+    '''
+
+    # * attribute: type
+    type: Literal['color_picker'] = 'color_picker'
+
+    # * attribute: color
+    color: Optional[str] = Field(
+        default=None,
+        description='The hex color value.'
+    )
+
+
+# ** model: country_value
+class CountryValue(ColumnValue):
+    '''
+    A country column value.
+    '''
+
+    # * attribute: type
+    type: Literal['country'] = 'country'
+
+    # * attribute: country_code
+    country_code: Optional[str] = Field(
+        default=None,
+        description='The two-letter country code.'
+    )
+
+    # * attribute: country_name
+    country_name: Optional[str] = Field(
+        default=None,
+        description='The country name.'
+    )
+
+
+# ** model: formula_value
+class FormulaValue(ColumnValue):
+    '''
+    A formula column value (read-only computed).
+    '''
+
+    # * attribute: type
+    type: Literal['formula'] = 'formula'
+
+
+# ** model: mirror_value
+class MirrorValue(ColumnValue):
+    '''
+    A mirror column value (read-only linked).
+    '''
+
+    # * attribute: type
+    type: Literal['mirror'] = 'mirror'
+
+    # * attribute: mirrored_items
+    mirrored_items: List[dict] = Field(
+        default_factory=list,
+        description='The mirrored items data.'
+    )
+
+
+# ** model: connect_boards_value
+class ConnectBoardsValue(ColumnValue):
+    '''
+    A connect boards column value.
+    '''
+
+    # * attribute: type
+    type: Literal['connect_boards'] = 'connect_boards'
+
+    # * attribute: linked_item_ids
+    linked_item_ids: List[int] = Field(
+        default_factory=list,
+        description='A list of linked item IDs.'
+    )
+
+
+# ** model: dependency_value
+class DependencyValue(ColumnValue):
+    '''
+    A dependency column value.
+    '''
+
+    # * attribute: type
+    type: Literal['dependency'] = 'dependency'
+
+    # * attribute: linked_item_ids
+    linked_item_ids: List[int] = Field(
+        default_factory=list,
+        description='A list of dependent item IDs.'
+    )
+
+
+# ** model: time_tracking_value
+class TimeTrackingValue(ColumnValue):
+    '''
+    A time tracking column value.
+    '''
+
+    # * attribute: type
+    type: Literal['time_tracking'] = 'time_tracking'
+
+    # * attribute: duration
+    duration: Optional[int] = Field(
+        default=None,
+        description='The total tracked duration in seconds.'
+    )
+
+    # * attribute: running
+    running: Optional[bool] = Field(
+        default=None,
+        description='Whether the timer is currently running.'
+    )
+
+
+# ** model: vote_value
+class VoteValue(ColumnValue):
+    '''
+    A vote column value.
+    '''
+
+    # * attribute: type
+    type: Literal['vote'] = 'vote'
+
+    # * attribute: voter_ids
+    voter_ids: List[int] = Field(
+        default_factory=list,
+        description='List of voter user IDs.'
+    )
+
+
+# ** model: world_clock_value
+class WorldClockValue(ColumnValue):
+    '''
+    A world clock column value.
+    '''
+
+    # * attribute: type
+    type: Literal['world_clock'] = 'world_clock'
+
+    # * attribute: timezone
+    timezone: Optional[str] = Field(
+        default=None,
+        description='The timezone identifier.'
+    )
+
+
+# ** model: creation_log_value
+class CreationLogValue(ColumnValue):
+    '''
+    A creation log column value (read-only).
+    '''
+
+    # * attribute: type
+    type: Literal['creation_log'] = 'creation_log'
+
+    # * attribute: created_at
+    created_at: Optional[str] = Field(
+        default=None,
+        description='The creation timestamp.'
+    )
+
+    # * attribute: creator_id
+    creator_id: Optional[str] = Field(
+        default=None,
+        description='The creator user ID.'
+    )
+
+
+# ** model: last_updated_value
+class LastUpdatedValue(ColumnValue):
+    '''
+    A last updated column value (read-only).
+    '''
+
+    # * attribute: type
+    type: Literal['last_updated'] = 'last_updated'
+
+    # * attribute: updated_at
+    updated_at: Optional[str] = Field(
+        default=None,
+        description='The last updated timestamp.'
+    )
+
+    # * attribute: updater_id
+    updater_id: Optional[str] = Field(
+        default=None,
+        description='The updater user ID.'
+    )

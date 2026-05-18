@@ -27,6 +27,18 @@ from ..domain.column_value import (
     RatingValue,
     LongTextValue,
     TimelineValue,
+    TagsValue,
+    ColorPickerValue,
+    CountryValue,
+    FormulaValue,
+    MirrorValue,
+    ConnectBoardsValue,
+    DependencyValue,
+    TimeTrackingValue,
+    VoteValue,
+    WorldClockValue,
+    CreationLogValue,
+    LastUpdatedValue,
 )
 
 
@@ -380,6 +392,174 @@ class TimelineValueMondayObject(TimelineValue, MondayObject):
         default='',
         description='The column title.'
     )
+
+
+# ** mapper: tags_value_monday_object
+@monday_column_type('tags')
+class TagsValueMondayObject(TagsValue, MondayObject):
+    '''
+    MondayObject for tags column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on TagsValue { tag_ids }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: color_picker_value_monday_object
+@monday_column_type('color_picker')
+class ColorPickerValueMondayObject(ColorPickerValue, MondayObject):
+    '''
+    MondayObject for color picker column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on ColorPickerValue { color }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: country_value_monday_object
+@monday_column_type('country')
+class CountryValueMondayObject(CountryValue, MondayObject):
+    '''
+    MondayObject for country column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on CountryValue { country_code country_name }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: formula_value_monday_object
+@monday_column_type('formula')
+class FormulaValueMondayObject(FormulaValue, MondayObject):
+    '''
+    MondayObject for formula column values (read-only computed).
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[Optional[str]] = None
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: mirror_value_monday_object
+@monday_column_type('mirror')
+class MirrorValueMondayObject(MirrorValue, MondayObject):
+    '''
+    MondayObject for mirror column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on MirrorValue { mirrored_items { linked_item { id name } } }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: connect_boards_value_monday_object
+@monday_column_type('connect_boards')
+class ConnectBoardsValueMondayObject(ConnectBoardsValue, MondayObject):
+    '''
+    MondayObject for connect boards column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on BoardRelationValue { linked_item_ids }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: dependency_value_monday_object
+@monday_column_type('dependency')
+class DependencyValueMondayObject(DependencyValue, MondayObject):
+    '''
+    MondayObject for dependency column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on DependencyValue { linked_item_ids }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: time_tracking_value_monday_object
+@monday_column_type('time_tracking')
+class TimeTrackingValueMondayObject(TimeTrackingValue, MondayObject):
+    '''
+    MondayObject for time tracking column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on TimeTrackingValue { duration running }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: vote_value_monday_object
+@monday_column_type('vote')
+class VoteValueMondayObject(VoteValue, MondayObject):
+    '''
+    MondayObject for vote column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on VoteValue { voter_ids }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: world_clock_value_monday_object
+@monday_column_type('world_clock')
+class WorldClockValueMondayObject(WorldClockValue, MondayObject):
+    '''
+    MondayObject for world clock column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on WorldClockValue { timezone }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: creation_log_value_monday_object
+@monday_column_type('creation_log')
+class CreationLogValueMondayObject(CreationLogValue, MondayObject):
+    '''
+    MondayObject for creation log column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on CreationLogValue { created_at creator_id }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
+
+
+# ** mapper: last_updated_value_monday_object
+@monday_column_type('last_updated')
+class LastUpdatedValueMondayObject(LastUpdatedValue, MondayObject):
+    '''
+    MondayObject for last updated column values.
+    '''
+
+    # * attribute: _GRAPHQL_FRAGMENT
+    _GRAPHQL_FRAGMENT: ClassVar[str] = '... on LastUpdatedValue { updated_at updater_id }'
+
+    # * attribute: name
+    name: str = Field(default='', description='The column title.')
 
 
 # *** types

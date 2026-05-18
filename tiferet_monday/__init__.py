@@ -1,7 +1,7 @@
 """Tiferet Monday Version and Exports"""
 
 # *** version
-__version__ = '1.0.0a3'
+__version__ = '1.0.0a4'
 
 # *** exports
 
